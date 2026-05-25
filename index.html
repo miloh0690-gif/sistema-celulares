@@ -3,123 +3,314 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control - Tienda de Celulares</title>
+    <title>Sistema de Gestión - Tienda de Celulares</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900">
+<body class="bg-gray-100 font-sans text-gray-900">
 
-    <header class="bg-blue-900 text-white p-4 shadow-md">
+    <header class="bg-slate-900 text-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wider">HARVARD TECH MOBILES</h1>
-            <span class="bg-blue-800 px-3 py-1 rounded text-sm font-semibold">Módulo: Inventario & Tipo de Cambio</span>
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight text-blue-400">HARVARD TECH MOBILES</h1>
+                <p class="text-xs text-gray-400 font-mono">Enterprise Resource Planning (ERP) v2.0</p>
+            </div>
+            <nav class="flex space-x-2">
+                <button onclick="cambiarPestana('vendedor')" id="btn-vendedor" class="px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow">
+                    🛒 Vista Vendedor
+                </button>
+                <button onclick="cambiarPestana('dueno')" id="btn-dueno" class="px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700">
+                    🔑 Vista Dueño (Privado)
+                </button>
+                <button onclick="cambiarPestana('reportes')" id="btn-reportes" class="px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700">
+                    📊 Reportes de Ventas
+                </button>
+            </nav>
         </div>
     </header>
 
-    <main class="container mx-auto p-6 max-w-4xl">
-        
-        <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">1. Moneda y Tipo de Cambio (Fluctuación)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Cambio Actual (1 USD a Moneda Local)</label>
-                    <input type="number" id="tipoCambio" value="6.96" step="0.01" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="calcularPreciosSugeridos()">
-                    <p class="text-xs text-gray-500 mt-1">Modifica este valor cuando cambie la divisa para actualizar los costos.</p>
+    <main class="container mx-auto p-6 max-w-5xl">
+
+        <section id="seccion-vendedor" class="space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                    <span class="mr-2">🛍️</span> Registrar Nueva Venta
+                </h2>
+                
+                <form onsubmit="registrarVenta(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tu Nombre (Vendedor)</label>
+                            <input type="text" id="ventaVendedor" required placeholder="Ej: Carlos Mendoza" class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo de Celular</label>
+                            <select id="ventaModelo" class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500">
+                                <option value="iPhone 15 Pro" data-costo="800" data-sucursal="Central">iPhone 15 Pro (Stock: Sucursal Central)</option>
+                                <option value="Samsung Galaxy S24" data-costo="700" data-sucursal="Norte">Samsung Galaxy S24 (Stock: Sucursal Norte)</option>
+                                <option value="Xiaomi Redmi Note 13" data-costo="200" data-sucursal="Mall">Xiaomi Redmi Note 13 (Stock: Sucursal Mall)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Venta</label>
+                            <select id="ventaTipo" class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500" onchange="actualizarPreciosVenta()">
+                                <option value="Unidad">Venta por Unidad (Minorista)</option>
+                                <option value="Mayor">Venta por Mayor (Volumen)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cantidad Vendida</label>
+                            <input type="number" id="ventaCantidad" value="1" min="1" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Cambio del Día</label>
+                            <input type="number" id="ventaTipoCambio" value="6.96" step="0.01" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta()">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Precio Cobrado por Unidad (Moneda Local)</label>
+                            <input type="number" id="ventaPrecioCobrado" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta()">
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 uppercase block">Total a Cobrar al Cliente:</span>
+                            <span id="txtTotalCobrar" class="text-xl font-extrabold text-slate-900">0.00</span>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-emerald-600 uppercase block">Tu Comisión Estimada:</span>
+                            <span id="txtComisionVendedor" class="text-xl font-extrabold text-emerald-600">0.00</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition shadow cursor-pointer">
+                        💸 Registrar y Confirmar Venta
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <section id="seccion-dueno" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-red-200 bg-gradient-to-r from-red-50/30 to-white">
+                <h2 class="text-xl font-bold text-red-900 mb-4 flex items-center">
+                    <span class="mr-2">🛡️</span> Panel de Control Patrimonial (Solo Dueños)
+                </h2>
+                <p class="text-sm text-gray-600 mb-4">Aquí puedes ver el costo real en dólares de la mercadería traída de Chile y los márgenes netos de la empresa.</p>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse bg-white">
+                        <thead>
+                            <tr class="bg-slate-800 text-white text-xs uppercase">
+                                <th class="p-3 rounded-l">Modelo</th>
+                                <th class="p-3">Sucursal</th>
+                                <th class="p-3">Costo Importación Chile (USD)</th>
+                                <th class="p-3 rounded-r">Margen Sugerido</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-gray-200">
+                            <tr>
+                                <td class="p-3 font-medium">iPhone 15 Pro</td>
+                                <td class="p-3"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs">Central</span></td>
+                                <td class="p-3 text-red-600 font-mono font-bold">$800.00 USD</td>
+                                <td class="p-3 text-emerald-600 font-bold">+ 20% Unidad / + 8% Mayor</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-medium">Samsung Galaxy S24</td>
+                                <td class="p-3"><span class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded text-xs">Norte</span></td>
+                                <td class="p-3 text-red-600 font-mono font-bold">$700.00 USD</td>
+                                <td class="p-3 text-emerald-600 font-bold">+ 20% Unidad / + 8% Mayor</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
 
-        <section class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">2. Ingreso de Nuevo Producto (Importación de Chile)</h2>
-            
-            <form id="formProducto" class="space-y-4" onsubmit="guardarProducto(event)">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Modelo del Celular</label>
-                        <input type="text" id="modelo" placeholder="Ej: iPhone 15 Pro Max" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Sucursal de Destino</label>
-                        <select id="sucursal" class="w-full p-2 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500">
-                            <option value="Sucursal Central">Sucursal Central</option>
-                            <option value="Sucursal Norte">Sucursal Norte</option>
-                            <option value="Sucursal Mall">Sucursal Mall</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Costo de Compra (USD $)</label>
-                        <input type="number" id="costoUsd" value="100" step="0.01" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="calcularPreciosSugeridos()">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Cantidad de Unidades</label>
-                        <input type="number" id="cantidad" value="1" min="1" required class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
-                    </div>
+        <section id="seccion-reportes" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Total Ventas por Unidad (Minorista)</span>
+                    <h3 id="kpiUnidad" class="text-2xl font-black text-blue-900 mt-1">0.00</h3>
                 </div>
-
-                <div class="bg-blue-50 p-4 rounded border border-blue-200 grid grid-cols-2 gap-4">
-                    <div>
-                        <span class="block text-xs text-blue-700 font-bold uppercase">Costo Convertido (Moneda Local):</span>
-                        <span id="costoLocalLabel" class="text-lg font-bold text-blue-900">0.00</span>
-                    </div>
-                    <div>
-                        <span class="block text-xs text-emerald-700 font-bold uppercase">Precio Mínimo de Venta Sugerido:</span>
-                        <span id="precioSugeridoLabel" class="text-lg font-bold text-emerald-900">0.00</span>
-                    </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Total Ventas por Mayor (Volumen)</span>
+                    <h3 id="kpiMayor" class="text-2xl font-black text-amber-900 mt-1">0.00</h3>
                 </div>
+            </div>
 
-                <button type="submit" class="w-full bg-blue-900 text-white p-3 rounded font-bold hover:bg-blue-800 transition shadow cursor-pointer">
-                    Registrar en Inventario
-                </button>
-            </form>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Historial de Auditoría de Ventas</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase border-b border-gray-200">
+                                <th class="p-3">Vendedor</th>
+                                <th class="p-3">Producto / Sucursal</th>
+                                <th class="p-3">Tipo</th>
+                                <th class="p-3">Cant.</th>
+                                <th class="p-3">Total Cobrado</th>
+                                <th class="p-3">Comisión Pagada</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaReportes" class="text-sm divide-y divide-gray-100">
+                            <tr id="filaVacia">
+                                <td colspan="6" class="p-4 text-center text-gray-400 italic">No hay ventas registradas en esta sesión todavía.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </section>
 
     </main>
 
     <script>
-        // Esta función calcula los costos automáticamente basándose en la fluctuación de la moneda
-        function calcularPreciosSugeridos() {
-            // Analogía: Obtenemos los datos de la pantalla como si sacáramos datos de una factura
-            const tipoCambio = parseFloat(document.getElementById('tipoCambio').value) || 0;
-            const costoUsd = parseFloat(document.getElementById('costoUsd').value) || 0;
+        // Simulamos una mini base de datos en la memoria del navegador para guardar las ventas temporalmente
+        let baseDeDatosVentas = [];
 
-            // Operación matemática: Costo en USD multiplicado por el Tipo de Cambio
-            const costoLocal = costoUsd * tipoCambio;
-            
-            // Regla de Negocio de Harvard: Le sumamos un 20% de margen mínimo sugerido para cubrir comisiones y ganar dinero
-            const precioSugerido = costoLocal * 1.20;
+        // Función para cambiar de pestaña con estilo ejecutivo y control de seguridad básico
+        function cambiarPestana(pestanaObjetivo) {
+            // Regra de Seguridad para la pestaña de dueños
+            if (pestanaObjetivo === 'dueno') {
+                const pin = prompt("Ingrese el código PIN secreto de Dueño para ver costos privados:");
+                if (pin !== "1234") { // Código PIN genérico por ahora
+                    alert("⚠️ Acceso Denegado. Código de seguridad incorrecto.");
+                    return;
+                }
+            }
 
-            // Mostramos los resultados modificando el texto de la pantalla en tiempo real
-            document.getElementById('costoLocalLabel').textContent = costoLocal.toFixed(2);
-            document.getElementById('precioSugeridoLabel').textContent = precioSugerido.toFixed(2);
+            // Ocultamos todas las secciones primero
+            document.getElementById('seccion-vendedor').classList.add('hidden');
+            document.getElementById('seccion-dueno').classList.add('hidden');
+            document.getElementById('seccion-reportes').classList.add('hidden');
+
+            // Quitamos el diseño activo de todos los botones de navegación
+            const botones = ['btn-vendedor', 'btn-dueno', 'btn-reportes'];
+            botones.forEach(id => {
+                const btn = document.getElementById(id);
+                btn.className = "px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700";
+            });
+
+            // Mostramos la sección seleccionada y activamos su botón
+            if (pestanaObjetivo === 'vendedor') {
+                document.getElementById('seccion-vendedor').classList.remove('hidden');
+                document.getElementById('btn-vendedor').className = "px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow";
+            } else if (pestanaObjetivo === 'dueno') {
+                document.getElementById('seccion-dueno').classList.remove('hidden');
+                document.getElementById('btn-dueno').className = "px-4 py-2 rounded text-sm font-bold bg-red-600 text-white shadow";
+            } else if (pestanaObjetivo === 'reportes') {
+                document.getElementById('seccion-reportes').classList.remove('hidden');
+                document.getElementById('btn-reportes').className = "px-4 py-2 rounded text-sm font-bold bg-amber-600 text-white shadow";
+                actualizarTablaYKPIs();
+            }
         }
 
-        // Esta función se ejecuta cuando el usuario presiona el botón "Registrar en Inventario"
-        function guardarProducto(event) {
-            // Evitamos que la página se recargue (comportamiento por defecto de los formularios)
+        // Calcula comisiones y totales dinámicamente en la pantalla del vendedor
+        function actualizarPreciosVenta() {
+            const selectProducto = document.getElementById('ventaModelo');
+            const costoUsd = parseFloat(selectProducto.options[selectProducto.selectedIndex].getAttribute('data-costo'));
+            
+            const tipoVenta = document.getElementById('ventaTipo').value;
+            const cantidad = parseInt(document.getElementById('ventaCantidad').value) || 0;
+            const tipoCambio = parseFloat(document.getElementById('ventaTipoCambio').value) || 0;
+            
+            // Si el input del precio cobrado está vacío, le sugerimos un precio base automatizado
+            let inputPrecioCobrado = document.getElementById('ventaPrecioCobrado');
+            if (!inputPrecioCobrado.value || inputPrecioCobrado.dataset.autofill === "true") {
+                const costoLocalUnitario = costoUsd * tipoCambio;
+                // Al por mayor cobramos menos margen (8%), por unidad cobramos más (20%)
+                const margenSugerido = tipoVenta === 'Unidad' ? 1.20 : 1.08;
+                inputPrecioCobrado.value = Math.round(costoLocalUnitario * margenSugerido);
+                inputPrecioCobrado.dataset.autofill = "true";
+            }
+
+            const precioCobradoUnitario = parseFloat(inputPrecioCobrado.value) || 0;
+            const totalCobrado = precioCobradoUnitario * cantidad;
+            
+            // CÁLCULO DE LA COMISIÓN BASADA EN LA UTILIDAD REAL (Regla Harvard)
+            const costoTotalLocal = (costoUsd * tipoCambio) * cantidad;
+            const utilidadRealEmpresa = totalCobrado - costoTotalLocal;
+            
+            let comisionTotal = 0;
+            if (utilidadRealEmpresa > 0) {
+                // Si es por unidad gana el 10% de la utilidad. Si es por mayor el 3% por el volumen.
+                const porcentajeComision = tipoVenta === 'Unidad' ? 0.10 : 0.03;
+                comisionTotal = utilidadRealEmpresa * porcentajeComision;
+            }
+
+            // Pintamos los resultados en pantalla
+            document.getElementById('txtTotalCobrar').textContent = totalCobrado.toFixed(2);
+            document.getElementById('txtComisionVendedor').textContent = comisionTotal.toFixed(2);
+        }
+
+        // Captura los datos del formulario y los almacena en el arreglo global
+        function registrarVenta(event) {
             event.preventDefault();
 
-            // Capturamos todos los valores introducidos por el usuario
-            const modelo = document.getElementById('modelo').value;
-            const sucursal = document.getElementById('sucursal').value;
-            const costoUsd = document.getElementById('costoUsd').value;
-            const cantidad = document.getElementById('cantidad').value;
-            const tipoCambioUsado = document.getElementById('tipoCambio').value;
+            const vendedor = document.getElementById('ventaVendedor').value;
+            const selectProducto = document.getElementById('ventaModelo');
+            const modelo = selectProducto.value;
+            const sucursal = selectProducto.options[selectProducto.selectedIndex].getAttribute('data-sucursal');
+            const tipo = document.getElementById('ventaTipo').value;
+            const cantidad = parseInt(document.getElementById('ventaCantidad').value);
+            const totalCobrado = parseFloat(document.getElementById('txtTotalCobrar').textContent);
+            const comision = parseFloat(document.getElementById('txtComisionVendedor').textContent);
 
-            // Mensaje de éxito temporal para comprobar que la lógica de captura funciona perfectamente
-            alert(`¡Excelente! Producto capturado con éxito empresarial:\n\n` +
-                  `Modelo: ${modelo}\n` +
-                  `Destino: ${sucursal}\n` +
-                  `Costo: $${costoUsd} USD (Registrado con tipo de cambio: ${tipoCambioUsado})\n` +
-                  `Cantidad: ${cantidad} unidades.`);
-            
-            // Limpiamos el formulario para un nuevo registro
-            document.getElementById('modelo').value = '';
+            // Guardamos el objeto de negocio en nuestra lista
+            baseDeDatosVentas.push({ vendedor, modelo, sucursal, tipo, cantidad, totalCobrado, comision });
+
+            alert("💰 ¡Venta Registrada con Éxito Económico! Los reportes han sido actualizados.");
+
+            // Reseteamos campos clave
+            document.getElementById('ventaVendedor').value = '';
+            document.getElementById('ventaPrecioCobrado').value = '';
+            document.getElementById('ventaPrecioCobrado').dataset.autofill = "true";
+            actualizarPreciosVenta();
         }
 
-        // Ejecutamos la función una vez al cargar la página para que los valores iniciales no estén en cero
-        calcularPreciosSugeridos();
+        // Renderiza el historial de auditoría y recalcula los KPI globales de la empresa
+        function actualizarTablaYKPIs() {
+            const tabla = document.getElementById('tablaReportes');
+            const filaVacia = document.getElementById('filaVacia');
+            
+            // Limpiamos la tabla quitando filas viejas (excepto la fila vacía de respaldo)
+            tabla.innerHTML = '';
+
+            if (baseDeDatosVentas.length === 0) {
+                tabla.appendChild(filaVacia);
+                document.getElementById('kpiUnidad').textContent = "0.00";
+                document.getElementById('kpiMayor').textContent = "0.00";
+                return;
+            }
+
+            let acumuladoUnidad = 0;
+            let acumuladoMayor = 0;
+
+            // Recorremos la base de datos para construir las filas en HTML
+            baseDeDatosVentas.forEach(venta => {
+                if (venta.tipo === 'Unidad') acumuladoUnidad += venta.totalCobrado;
+                if (venta.tipo === 'Mayor') acumuladoMayor += venta.totalCobrado;
+
+                const fila = document.createElement('tr');
+                fila.className = "hover:bg-slate-50";
+                fila.innerHTML = `
+                    <td class="p-3 font-medium">${venta.vendedor}</td>
+                    <td class="p-3">${venta.modelo} <span class="text-xs text-gray-400">(${venta.sucursal})</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${venta.tipo === 'Unidad' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">${venta.tipo}</span></td>
+                    <td class="p-3 font-mono">${venta.cantidad}</td>
+                    <td class="p-3 font-bold text-slate-900">${venta.totalCobrado.toFixed(2)}</td>
+                    <td class="p-3 text-emerald-600 font-bold">${venta.comision.toFixed(2)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+
+            // Actualizamos los bloques de indicadores superiores
+            document.getElementById('kpiUnidad').textContent = acumuladoUnidad.toFixed(2);
+            document.getElementById('kpiMayor').textContent = acumuladoMayor.toFixed(2);
+        }
+
+        // Inicializador automático para cargar cálculos correctos al abrir la web
+        document.getElementById('ventaPrecioCobrado').dataset.autofill = "true";
+        actualizarPreciosVenta();
     </script>
 </body>
 </html>
