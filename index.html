@@ -357,8 +357,12 @@
             document.getElementById('txtComisionVendedor').textContent = comisionTotal.toFixed(2);
         }
 
+        // REGISTRO DE TRANSACCIÓN COMERCIAL CON CONEXIÓN INMEDIATA A GOOGLE SHEETS
         function registrarVenta(event) {
             event.preventDefault();
+
+            // Reemplaza el texto de abajo con la URL completa que copiaste en el Paso 2
+            const URL_MI_GOOGLE_API = "https://script.google.com/macros/s/AKfycbzSleobJjk5kBKDNhSDfmhabf87z5mjMI-ScnkSusQrgDHQnkhsoNjjLXdy91BEMuXWgQ/exec";
 
             const vendedor = document.getElementById('ventaVendedor').value;
             const select = document.getElementById('ventaModelo');
@@ -376,6 +380,47 @@
                 alert(`❌ ERROR DE INVENTARIO: Stock insuficiente en la Sucursal ${sucursal}.`);
                 return;
             }
+
+            // Descontar existencias localmente
+            inventarioProductos[indiceInventario].stock -= cantidad;
+
+            // Guardar localmente en el arreglo de reportes
+            baseDeDatosVentas.push({ vendedor, modelo, sucursal, tipo, cantidad, totalCobrado, gananciaRegistrada, comision });
+
+            // ENVIAR DATOS A GOOGLE SHEETS EN SEGUNDO PLANO (Ruta Ágil)
+            const datosParaNube = {
+                vendedor: vendedor,
+                modelo: modelo,
+                sucursal: sucursal,
+                tipo: tipo,
+                cantidad: cantidad,
+                totalCobrado: totalCobrado,
+                gananciaRegistrada: gananciaRegistrada
+            };
+
+            // Ejecutamos una petición web asíncrona hacia tu Excel
+            fetch(URL_MI_GOOGLE_API, {
+                method: 'POST',
+                mode: 'no-cors', // Evita bloqueos de seguridad de navegadores convencionales
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosParaNube)
+            })
+            .then(() => {
+                console.log("Sincronización en la nube completada.");
+            })
+            .catch(error => {
+                console.error("Fallo de red al enviar a la nube:", error);
+            });
+
+            // Notificación al vendedor
+            alert(`💰 ¡Venta procesada con éxito!\nLa utilidad neta de ${gananciaRegistrada.toFixed(2)} ha sido respaldada en la base de datos central.`);
+
+            // Limpieza ordinaria del formulario
+            document.getElementById('ventaVendedor').value = '';
+            document.getElementById('ventaPrecioCobrado').dataset.manual = "false";
+            actualizarSelectoresDeProductos();
+            actualizarPreciosVenta(false);
+        }
 
             inventarioProductos[indiceInventario].stock -= cantidad;
 
