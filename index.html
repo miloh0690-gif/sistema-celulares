@@ -4,16 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Gestión - Tienda de Celulares</title>
+    <!-- Importamos Tailwind CSS para un diseño visual ejecutivo y limpio -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
 
+    <!-- ENCABEZADO PRINCIPAL -->
     <header class="bg-slate-900 text-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-blue-400">HARVARD TECH MOBILES</h1>
-                <p class="text-xs text-gray-400 font-mono">Enterprise Resource Planning (ERP) v3.0</p>
+                <p class="text-xs text-gray-400 font-mono">Enterprise Resource Planning (ERP) v4.0 - Margen Neto</p>
             </div>
+            <!-- MENÚ DE NAVEGACIÓN -->
             <nav class="flex space-x-2">
                 <button onclick="cambiarPestana('vendedor')" id="btn-vendedor" class="px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow">
                     🛒 Vista Vendedor
@@ -30,6 +33,9 @@
 
     <main class="container mx-auto p-6 max-w-5xl">
 
+        <!-- ========================================== -->
+        <!-- PESTAÑA 1: VISTA VENDEDOR                 -->
+        <!-- ========================================== -->
         <section id="seccion-vendedor" class="space-y-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
@@ -38,15 +44,19 @@
                 
                 <form onsubmit="registrarVenta(event)" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Nombre del Vendedor -->
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tu Nombre (Vendedor)</label>
                             <input type="text" id="ventaVendedor" required placeholder="Ej: Carlos Mendoza" class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
                         </div>
+                        <!-- Selección de Producto -->
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo de Celular</label>
                             <select id="ventaModelo" class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500" onchange="forzarAutofillYRecalcular()">
-                                </select>
+                                <!-- Los productos se cargan dinámicamente -->
+                            </select>
                         </div>
+                        <!-- Tipo de Venta -->
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Venta</label>
                             <select id="ventaTipo" class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500" onchange="forzarAutofillYRecalcular()">
@@ -54,28 +64,35 @@
                                 <option value="Mayor">Venta por Mayor (Volumen)</option>
                             </select>
                         </div>
+                        <!-- Cantidad -->
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cantidad Vendida</label>
                             <input type="number" id="ventaCantidad" value="1" min="1" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(false)">
                         </div>
+                        <!-- Tipo de cambio -->
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Cambio del Día</label>
                             <input type="number" id="ventaTipoCambio" value="6.96" step="0.01" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(false)">
                         </div>
+                        <!-- Precio cobrado al cliente (Editable) -->
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Precio Cobrado por Unidad (Editable)</label>
                             <input type="number" id="ventaPrecioCobrado" required class="w-full p-2.5 border border-blue-400 bg-blue-50/50 rounded font-bold focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(true)">
-                            <p class="text-[10px] text-blue-600 mt-1">Sugerido automático aplicado. Puedes modificarlo.</p>
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- PANELES DE DATOS EN TIEMPO REAL -->
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <span class="text-xs font-bold text-slate-500 uppercase block">Total Neto de la Operación:</span>
+                            <span class="text-xs font-bold text-slate-500 uppercase block">Total Cobrado al Cliente:</span>
                             <span id="txtTotalCobrar" class="text-xl font-extrabold text-slate-900">0.00</span>
                         </div>
-                        <div>
-                            <span class="text-xs font-bold text-emerald-600 uppercase block">Tu Comisión por esta Venta:</span>
+                        <div class="border-l pl-4 border-gray-200">
+                            <span class="text-xs font-bold text-blue-600 uppercase block">Ganancia de la Tienda (Monto Neto):</span>
+                            <span id="txtGananciaPura" class="text-xl font-extrabold text-blue-600">0.00</span>
+                        </div>
+                        <div class="border-l pl-4 border-gray-200">
+                            <span class="text-xs font-bold text-emerald-600 uppercase block">Comisión del Vendedor (Sobre Ganancia):</span>
                             <span id="txtComisionVendedor" class="text-xl font-extrabold text-emerald-600">0.00</span>
                         </div>
                     </div>
@@ -87,12 +104,15 @@
             </div>
         </section>
 
+        <!-- ========================================== -->
+        <!-- PESTAÑA 2: VISTA DUEÑO                     -->
+        <!-- ========================================== -->
         <section id="seccion-dueno" class="hidden space-y-6">
+            <!-- Formulario de actualización de existencias -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-red-200">
                 <h2 class="text-xl font-bold text-red-900 mb-4 flex items-center">
                     <span class="mr-2">⚙️</span> Consola de Inventario Base (Importaciones Chile)
                 </h2>
-                
                 <form onsubmit="agregarOEditarMercaderia(event)" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo / Celular</label>
@@ -122,55 +142,67 @@
                 </form>
             </div>
 
+            <!-- Tabla de inventario -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                 <h3 class="text-md font-bold text-gray-800 mb-3">Stock Activo y Márgenes de Importación</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-800 text-white text-xs uppercase">
-                                <th class="p-3 rounded-l">Modelo del Dispositivo</th>
-                                <th class="p-3">Sucursal Asignada</th>
+                                <th class="p-3 rounded-l">Modelo</th>
+                                <th class="p-3">Sucursal</th>
                                 <th class="p-3">Costo Base (Chile)</th>
-                                <th class="p-3">Unidades Disponibles</th>
+                                <th class="p-3">Stock Disponible</th>
                                 <th class="p-3 rounded-r text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tablaInventarioDueno" class="text-sm divide-y divide-gray-200">
-                            </tbody>
+                            <!-- Inyección dinámica JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- ========================================== -->
+        <!-- PESTAÑA 3: REPORTES DE VENTAS              -->
+        <!-- ========================================== -->
         <section id="seccion-reportes" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- KPIs CON LA NUEVA MÉTRICA DE GANANCIA PURA ACUMULADA -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
-                    <span class="text-xs font-bold text-gray-500 uppercase">Volumen Bruto Ventas por Unidad</span>
-                    <h3 id="kpiUnidad" class="text-2xl font-black text-blue-900 mt-1">0.00</h3>
+                    <span class="text-xs font-bold text-gray-500 uppercase">Ventas Totales Brutas</span>
+                    <h3 id="kpiVentasTotales" class="text-2xl font-black text-slate-900 mt-1">0.00</h3>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500">
+                    <span class="text-xs font-bold text-emerald-600 uppercase">Ganancia Neta Real Tienda</span>
+                    <h3 id="kpiGananciaTotal" class="text-2xl font-black text-emerald-900 mt-1">0.00</h3>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
-                    <span class="text-xs font-bold text-gray-500 uppercase">Volumen Bruto Ventas por Mayor</span>
-                    <h3 id="kpiMayor" class="text-2xl font-black text-amber-900 mt-1">0.00</h3>
+                    <span class="text-xs font-bold text-amber-500 uppercase">Comisiones Totales Pagadas</span>
+                    <h3 id="kpiComisionesTotales" class="text-2xl font-black text-amber-900 mt-1">0.00</h3>
                 </div>
             </div>
 
+            <!-- TABLA DE HISTORIAL AVANZADO -->
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">Auditoría Avanzada de Ventas y Comisiones</h2>
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Auditoría de Ventas y Rendimiento de Utilidades</h2>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase border-b border-gray-200">
                                 <th class="p-3">Vendedor</th>
                                 <th class="p-3">Producto / Sucursal</th>
-                                <th class="p-3">Tipo de Venta</th>
+                                <th class="p-3">Tipo</th>
                                 <th class="p-3">Cant.</th>
-                                <th class="p-3">Total Cobrado</th>
-                                <th class="p-3">Comisión Devengada</th>
+                                <th class="p-3">Venta Total</th>
+                                <th class="p-3 text-blue-600">Ganancia Equipo</th>
+                                <th class="p-3 text-emerald-600">Comisión (De la Ganancia)</th>
                             </tr>
                         </thead>
                         <tbody id="tablaReportes" class="text-sm divide-y divide-gray-100">
                             <tr id="filaVacia">
-                                <td colspan="6" class="p-4 text-center text-gray-400 italic">No hay transacciones registradas en este ciclo operacional.</td>
+                                <td colspan="7" class="p-4 text-center text-gray-400 italic">No hay registros operacionales en este ciclo.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -180,8 +212,9 @@
 
     </main>
 
+    <!-- PROGRAMACIÓN LOGICA DEL SISTEMA -->
     <script>
-        // Simulamos nuestra base de datos Maestra en memoria (Arreglos de Objetos)
+        // Simulador de Base de Datos Maestra
         let inventarioProductos = [
             { modelo: "iPhone 15 Pro", sucursal: "Central", costoUsd: 800, stock: 15 },
             { modelo: "Samsung Galaxy S24", sucursal: "Norte", costoUsd: 700, stock: 8 },
@@ -189,31 +222,27 @@
         ];
 
         let baseDeDatosVentas = [];
-        const PIN_SECRETO = "1234"; // Pin de seguridad único exigido por el dueño
+        const PIN_SECRETO = "1234";
 
-        // CONTROL DE NAVEGACIÓN Y ACCESO BLINDADO
+        // GESTIÓN DE NAVEGACIÓN PROTEGIDA
         function cambiarPestana(pestanaObjetivo) {
-            // Protección de seguridad para Dueño y también para Reportes
             if (pestanaObjetivo === 'dueno' || pestanaObjetivo === 'reportes') {
                 const pin = prompt(`🔑 ACCESO PRIVADO: Ingrese el PIN de seguridad de Administración:`);
                 if (pin !== PIN_SECRETO) {
-                    alert("⚠️ Código erróneo. Acceso bloqueado por políticas de auditoría.");
+                    alert("⚠️ Código erróneo. Acceso denegado.");
                     return;
                 }
             }
 
-            // Ocultar todas las secciones de la interfaz
             document.getElementById('seccion-vendedor').classList.add('hidden');
             document.getElementById('seccion-dueno').classList.add('hidden');
             document.getElementById('seccion-reportes').classList.add('hidden');
 
-            // Resetear estilos estéticos de los botones de navegación
             const botones = ['btn-vendedor', 'btn-dueno', 'btn-reportes'];
             botones.forEach(id => {
                 document.getElementById(id).className = "px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700";
             });
 
-            // Activar visualmente la pestaña seleccionada
             if (pestanaObjetivo === 'vendedor') {
                 document.getElementById('seccion-vendedor').classList.remove('hidden');
                 document.getElementById('btn-vendedor').className = "px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow";
@@ -228,15 +257,14 @@
             }
         }
 
-        // RELLENA LOS SELECTORES DINÁMICAMENTE CON LA DATA ACTUALIZADA DEL DUEÑO
+        // CONTROL DINÁMICO DE SELECTORES
         function actualizarSelectorProductosVendedor() {
             const select = document.getElementById('ventaModelo');
-            select.innerHTML = ''; // Limpiamos opciones antiguas
+            select.innerHTML = ''; 
 
             inventarioProductos.forEach((prod, indice) => {
                 const opcion = document.createElement('option');
                 opcion.value = prod.modelo;
-                // Adjuntamos metadatos ocultos para recuperarlos fácilmente en el cálculo matemático
                 opcion.setAttribute('data-costo', prod.costoUsd);
                 opcion.setAttribute('data-sucursal', prod.sucursal);
                 opcion.setAttribute('data-indice', indice);
@@ -245,57 +273,58 @@
             });
         }
 
-        // Fuerza a la aplicación a aplicar el precio sugerido automático al cambiar de producto o tipo de venta
         function forzarAutofillYRecalcular() {
             const inputPrecio = document.getElementById('ventaPrecioCobrado');
-            inputPrecio.dataset.manual = "false"; // Rompemos el bloqueo manual para sobreescribir con la nueva sugerencia
+            inputPrecio.dataset.manual = "false"; 
             actualizarPreciosVenta(false);
         }
 
-        // CÁLCULO DE PRECIOS Y COMISIONES (LÓGICA MEDULAR)
+        // ARQUITECTURA DE CÁLCULO FINANCIERO (SOLUCIÓN AL REQUISITO)
         function actualizarPreciosVenta(esModificacionManual = false) {
             const select = document.getElementById('ventaModelo');
             if (!select.options[select.selectedIndex]) return;
 
-            // Recuperamos el costo real en USD asignado por el dueño
+            // 1. Obtener datos base
             const costoUsd = parseFloat(select.options[select.selectedIndex].getAttribute('data-costo'));
             const tipoVenta = document.getElementById('ventaTipo').value;
             const cantidad = parseInt(document.getElementById('ventaCantidad').value) || 0;
             const tipoCambio = parseFloat(document.getElementById('ventaTipoCambio').value) || 0;
             const inputPrecioCobrado = document.getElementById('ventaPrecioCobrado');
 
-            // Si el vendedor modificó el input directamente en pantalla, respetamos su valor
             if (esModificacionManual) {
                 inputPrecioCobrado.dataset.manual = "true";
             }
 
-            // Si NO es manual, calculamos el precio sugerido corporativo (Margen Harvard)
+            // Generar precio sugerido inicial si el usuario no ha digitado manualmente
             if (inputPrecioCobrado.dataset.manual !== "true") {
                 const costoLocalUnitario = costoUsd * tipoCambio;
-                const margenSugerido = tipoVenta === 'Unidad' ? 1.20 : 1.08; // 20% ganancia unidad, 8% ganancia mayor
+                const margenSugerido = tipoVenta === 'Unidad' ? 1.20 : 1.08; 
                 inputPrecioCobrado.value = Math.round(costoLocalUnitario * margenSugerido);
             }
 
+            // 2. Calcular los totales de la venta
             const precioCobradoUnitario = parseFloat(inputPrecioCobrado.value) || 0;
             const totalCobrado = precioCobradoUnitario * cantidad;
 
-            // COMISIÓN SOBRE LA UTILIDAD REAL (Precio final cobrado - Costo real de Chile)
-            const costoTotalLocal = (costoUsd * tipoCambio) * cantidad;
-            const utilidadRealEmpresa = totalCobrado - costoTotalLocal;
+            // 3. CALCULO DE LA GANANCIA PURA (Ecuación solicitada)
+            const costoTotalEnMonedaLocal = (costoUsd * tipoCambio) * cantidad;
+            const gananciaPuraTotal = totalCobrado - costoTotalEnMonedaLocal;
 
+            // 4. CALCULO DE COMISIÓN EXCLUSIVAMENTE SOBRE LA GANANCIA
             let comisionTotal = 0;
-            if (utilidadRealEmpresa > 0) {
-                // Si vende por unidad gana 10% de la ganancia líquida. Por mayor gana el 3%.
+            if (gananciaPuraTotal > 0) {
+                // Modificador de comisión: 10% para unidad, 3% para mayorista
                 const porcentajeComision = tipoVenta === 'Unidad' ? 0.10 : 0.03;
-                comisionTotal = utilidadRealEmpresa * porcentajeComision;
+                comisionTotal = gananciaPuraTotal * porcentajeComision;
             }
 
-            // Renderizamos los KPIs operacionales del vendedor
+            // Pintar resultados financieros en el dashboard del empleado
             document.getElementById('txtTotalCobrar').textContent = totalCobrado.toFixed(2);
+            document.getElementById('txtGananciaPura').textContent = gananciaPuraTotal.toFixed(2);
             document.getElementById('txtComisionVendedor').textContent = comisionTotal.toFixed(2);
         }
 
-        // PROCESA LA TRANSACCIÓN COMERCIAL Y DECREMENTA EL STOCK DE LA SUCURSAL
+        // REGISTRO DE TRANSACCIÓN COMERCIAL CON SALVAGUARDA DE STOCK
         function registrarVenta(event) {
             event.preventDefault();
 
@@ -306,31 +335,42 @@
             const indiceInventario = parseInt(select.options[select.selectedIndex].getAttribute('data-indice'));
             const tipo = document.getElementById('ventaTipo').value;
             const cantidad = parseInt(document.getElementById('ventaCantidad').value);
+            
+            // Extraemos los valores monetarios exactos calculados
             const totalCobrado = parseFloat(document.getElementById('txtTotalCobrar').textContent);
+            const gananciaRegistrada = parseFloat(document.getElementById('txtGananciaPura').textContent);
             const comision = parseFloat(document.getElementById('txtComisionVendedor').textContent);
 
-            // CONTROL DE INVENTARIO: Validamos si queda stock disponible antes de vender
             if (inventarioProductos[indiceInventario].stock < cantidad) {
-                alert(`❌ OPERACIÓN RECHAZADA: No cuentas con stock suficiente de este modelo en la Sucursal ${sucursal}.`);
+                alert(`❌ ERROR DE INVENTARIO: Stock insuficiente en la Sucursal ${sucursal}.`);
                 return;
             }
 
-            // Descontamos las unidades vendidas de la base de datos de mercadería
+            // Descontar existencias del inventario
             inventarioProductos[indiceInventario].stock -= cantidad;
 
-            // Insertamos la operación en los reportes
-            baseDeDatosVentas.push({ vendedor, modelo, sucursal, tipo, cantidad, totalCobrado, comision });
+            // Guardamos el registro completo incluyendo la GANANCIA PURA del equipo
+            baseDeDatosVentas.push({ 
+                vendedor, 
+                modelo, 
+                sucursal, 
+                tipo, 
+                cantidad, 
+                totalCobrado, 
+                gananciaRegistrada, // Guardado estratégico de la utilidad pura
+                comision 
+            });
 
-            alert("💰 Transacción completada con éxito corporativo. Se debitó el stock.");
+            alert(`💰 ¡Venta procesada con éxito! La utilidad neta registrada para este equipo fue de: ${gananciaRegistrada.toFixed(2)}`);
 
-            // Limpiamos formularios y re-sincronizamos pantallas
+            // Limpieza y refresco
             document.getElementById('ventaVendedor').value = '';
             document.getElementById('ventaPrecioCobrado').dataset.manual = "false";
             actualizarSelectorProductosVendedor();
             actualizarPreciosVenta(false);
         }
 
-        // CONSOLE DE DUEÑO: AGREGAR O ACTUALIZAR MERCADERÍA
+        // EDICIÓN DE INVENTARIO DEL DUEÑO
         function agregarOEditarMercaderia(event) {
             event.preventDefault();
 
@@ -339,21 +379,17 @@
             const costoUsd = parseFloat(document.getElementById('invCosto').value);
             const stock = parseInt(document.getElementById('invStock').value);
 
-            // Verificamos si el modelo ya existe en esa sucursal exacta para EDITARLO
             const indiceExistente = inventarioProductos.findIndex(p => p.modelo.toLowerCase() === modelo.toLowerCase() && p.sucursal === sucursal);
 
             if (indiceExistente !== -1) {
-                // CASO EDITAR: Actualizamos los parámetros existentes
                 inventarioProductos[indiceExistente].costoUsd = costoUsd;
                 inventarioProductos[indiceExistente].stock = stock;
-                alert(`🔄 Mercadería Actualizada: Se modificó la ficha técnica de ${modelo} en Sucursal ${sucursal}.`);
+                alert(`🔄 Inventario Base Actualizado.`);
             } else {
-                // CASO NUEVO: Insertamos el registro de importación
                 inventarioProductos.push({ modelo, sucursal, costoUsd, stock });
-                alert(`✨ Nuevo Lote de Chile Registrado: Se añadió ${modelo} al inventario.`);
+                alert(`✨ Nueva Importación añadida con éxito.`);
             }
 
-            // Reseteamos campos de la consola y refrescamos pantallas de todo el ERP
             document.getElementById('invModelo').value = '';
             document.getElementById('invCosto').value = '';
             document.getElementById('invStock').value = '';
@@ -362,7 +398,6 @@
             actualizarSelectorProductosVendedor();
         }
 
-        // CARGA LA LISTA EDITABLE EN EL PANEL DEL DUEÑO
         function renderizarInventarioDueno() {
             const tbody = document.getElementById('tablaInventarioDueno');
             tbody.innerHTML = '';
@@ -377,7 +412,7 @@
                     <td class="p-3 font-mono font-bold text-slate-900">${prod.stock} Unid.</td>
                     <td class="p-3 text-center">
                         <button onclick="cargarFichaParaEditar(${index})" class="bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs font-bold hover:bg-blue-100 cursor-pointer">
-                            ✏️ Cargar Datos
+                            ✏️ Editar
                         </button>
                     </td>
                 `;
@@ -385,18 +420,15 @@
             });
         }
 
-        // CARGA LOS DATOS DE LA TABLA AL FORMULARIO SUPERIOR PARA HACER LA EDICIÓN RÁPIDA
         function cargarFichaParaEditar(index) {
             const prod = inventarioProductos[index];
             document.getElementById('invModelo').value = prod.modelo;
             document.getElementById('invSucursal').value = prod.sucursal;
             document.getElementById('invCosto').value = prod.costoUsd;
             document.getElementById('invStock').value = prod.stock;
-            
-            alert(`📝 Datos de "${prod.modelo}" cargados en el formulario de arriba. Modifica los campos que desees y presiona "Guardar / Actualizar".`);
         }
 
-        // RENDERIZA REPORTES FINANCIEROS Y AUDITORÍA DE VENTAS
+        // AUDITORÍA Y RENDERIZACIÓN DE LOS REPORTES PROTEGIDOS
         function actualizarTablaYKPIs() {
             const tabla = document.getElementById('tablaReportes');
             const filaVacia = document.getElementById('filaVacia');
@@ -404,36 +436,43 @@
 
             if (baseDeDatosVentas.length === 0) {
                 tabla.appendChild(filaVacia);
-                document.getElementById('kpiUnidad').textContent = "0.00";
-                document.getElementById('kpiMayor').textContent = "0.00";
+                document.getElementById('kpiVentasTotales').textContent = "0.00";
+                document.getElementById('kpiGananciaTotal').textContent = "0.00";
+                document.getElementById('kpiComisionesTotales').textContent = "0.00";
                 return;
             }
 
-            let acumuladoUnidad = 0;
-            let acumuladoMayor = 0;
+            let acumuladoVentasBrutas = 0;
+            let acumuladoGananciaPura = 0;
+            let acumuladoComisiones = 0;
 
             baseDeDatosVentas.forEach(venta => {
-                if (venta.tipo === 'Unidad') acumuladoUnidad += venta.totalCobrado;
-                if (venta.tipo === 'Mayor') acumuladoMayor += venta.totalCobrado;
+                acumuladoVentasBrutas += venta.totalCobrado;
+                acumuladoGananciaPura += venta.gananciaRegistrada;
+                acumuladoComisiones += venta.comision;
 
                 const fila = document.createElement('tr');
                 fila.className = "hover:bg-slate-50";
                 fila.innerHTML = `
                     <td class="p-3 font-medium">${venta.vendedor}</td>
-                    <td class="p-3 text-xs text-gray-700 font-medium">${venta.modelo} <span class="text-gray-400">(${venta.sucursal})</span></td>
+                    <td class="p-3 text-xs text-gray-700">${venta.modelo} <span class="text-gray-400">(${venta.sucursal})</span></td>
                     <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-black ${venta.tipo === 'Unidad' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">${venta.tipo}</span></td>
                     <td class="p-3 font-mono font-bold">${venta.cantidad}</td>
-                    <td class="p-3 font-bold text-slate-900">${venta.totalCobrado.toFixed(2)}</td>
+                    <td class="p-3 font-bold text-slate-500">${venta.totalCobrado.toFixed(2)}</td>
+                    <!-- Aquí se muestra la Ganancia del Equipo solicitada -->
+                    <td class="p-3 font-bold text-blue-600">${venta.gananciaRegistrada.toFixed(2)}</td>
                     <td class="p-3 text-emerald-600 font-black">${venta.comision.toFixed(2)}</td>
                 `;
                 tabla.appendChild(fila);
             });
 
-            document.getElementById('kpiUnidad').textContent = acumuladoUnidad.toFixed(2);
-            document.getElementById('kpiMayor').textContent = acumuladoMayor.toFixed(2);
+            // Actualizamos los bloques informativos de dirección
+            document.getElementById('kpiVentasTotales').textContent = acumuladoVentasBrutas.toFixed(2);
+            document.getElementById('kpiGananciaTotal').textContent = acumuladoGananciaPura.toFixed(2);
+            document.getElementById('kpiComisionesTotales').textContent = acumuladoComisiones.toFixed(2);
         }
 
-        // INICIALIZADORES AL CARGAR LA APLICACIÓN WEB
+        // Inicializar la app
         actualizarSelectorProductosVendedor();
         actualizarPreciosVenta(false);
     </script>
