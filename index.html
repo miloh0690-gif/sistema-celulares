@@ -3,478 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión - Tienda de Celulares</title>
-    <!-- Importamos Tailwind CSS para un diseño visual ejecutivo y limpio -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Control de Préstamos y Consignaciones - Harvard Tech Mentor</title>
+    <!-- Importamos Tailwind CSS desde una fuente pública y segura para darle un diseño ejecutivo -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans text-gray-900">
+<body class="bg-gray-50 text-gray-800 font-sans min-h-screen">
 
-    <!-- ENCABEZADO PRINCIPAL -->
-    <header class="bg-slate-900 text-white p-4 shadow-lg">
-        <div class="container mx-auto flex justify-between items-center">
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight text-blue-400">HARVARD TECH MOBILES</h1>
-                <p class="text-xs text-gray-400 font-mono">Enterprise Resource Planning (ERP) v4.0 - Margen Neto</p>
-            </div>
-            <!-- MENÚ DE NAVEGACIÓN -->
-            <nav class="flex space-x-2">
-                <button onclick="cambiarPestana('vendedor')" id="btn-vendedor" class="px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow">
-                    🛒 Vista Vendedor
-                </button>
-                <button onclick="cambiarPestana('dueno')" id="btn-dueno" class="px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700">
-                    🔑 Vista Dueño (Privado)
-                </button>
-                <button onclick="cambiarPestana('reportes')" id="btn-reportes" class="px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700">
-                    📊 Reportes Protegidos
-                </button>
-            </nav>
-        </div>
-    </header>
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        
+        <!-- ENCABEZADO PRINCIPAL -->
+        <header class="mb-8 border-b border-gray-200 pb-4">
+            <h1 class="text-3xl font-bold text-indigo-900">Módulo de Préstamos y Consignaciones</h1>
+            <p class="text-gray-600 mt-1">Respaldo digital y control de activos para evitar pérdidas y olvidos.</p>
+        </header>
 
-    <main class="container mx-auto p-6 max-w-5xl">
-
-        <!-- ========================================== -->
-        <!-- PESTAÑA 1: VISTA VENDEDOR                 -->
-        <!-- ========================================== -->
-        <section id="seccion-vendedor" class="space-y-6">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-                    <span class="mr-2">🛍️</span> Registrar Nueva Venta
-                </h2>
+        <!-- DISTRIBUCIÓN EN DOS COLUMNAS: FORMULARIO (IZQUIERDA) Y TABLA/RESPALDO (DERECHA) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- COLUMNA 1: FORMULARIO DE REGISTRO (Ocupa 1 de 3 partes) -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 h-fit">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Registrar Nuevo Préstamo</h2>
                 
-                <form onsubmit="registrarVenta(event)" class="space-y-4">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- Nombre del Vendedor -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tu Nombre (Vendedor)</label>
-                            <input type="text" id="ventaVendedor" required placeholder="Ej: Carlos Mendoza" class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
-                        </div>
-                        <!-- Selección de Producto -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo de Celular</label>
-                            <select id="ventaModelo" class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500" onchange="forzarAutofillYRecalcular()">
-                                <!-- Los productos se cargan dinámicamente -->
-                            </select>
-                        </div>
-                        <!-- Tipo de Venta -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Venta</label>
-                            <select id="ventaTipo" class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500" onchange="forzarAutofillYRecalcular()">
-                                <option value="Unidad">Venta por Unidad (Minorista)</option>
-                                <option value="Mayor">Venta por Mayor (Volumen)</option>
-                            </select>
-                        </div>
-                        <!-- Cantidad -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cantidad Vendida</label>
-                            <input type="number" id="ventaCantidad" value="1" min="1" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(false)">
-                        </div>
-                        <!-- Tipo de cambio -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Cambio del Día</label>
-                            <input type="number" id="ventaTipoCambio" value="6.96" step="0.01" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(false)">
-                        </div>
-                        <!-- Precio cobrado al cliente (Editable) -->
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Precio Cobrado por Unidad (Editable)</label>
-                            <input type="number" id="ventaPrecioCobrado" required class="w-full p-2.5 border border-blue-400 bg-blue-50/50 rounded font-bold focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(true)">
-                        </div>
+                <form id="formPrestamo" class="space-y-4">
+                    <!-- Campo: Cliente -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Nombre del Cliente / Responsable</label>
+                        <input type="text" id="nombreCliente" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ej. Juan Pérez">
                     </div>
 
-                    <!-- PANELES DE DATOS EN TIEMPO REAL -->
-                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <span class="text-xs font-bold text-slate-500 uppercase block">Total Cobrado al Cliente:</span>
-                            <span id="txtTotalCobrar" class="text-xl font-extrabold text-slate-900">0.00</span>
-                        </div>
-                        <div class="border-l pl-4 border-gray-200">
-                            <span class="text-xs font-bold text-blue-600 uppercase block">Ganancia de la Tienda (Monto Neto):</span>
-                            <span id="txtGananciaPura" class="text-xl font-extrabold text-blue-600">0.00</span>
-                        </div>
-                        <div class="border-l pl-4 border-gray-200">
-                            <span class="text-xs font-bold text-emerald-600 uppercase block">Comisión del Vendedor (Sobre Ganancia):</span>
-                            <span id="txtComisionVendedor" class="text-xl font-extrabold text-emerald-600">0.00</span>
-                        </div>
+                    <!-- Campo: Equipo -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Equipo / Activo Prestado</label>
+                        <input type="text" id="equipoPrestado" required class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="Ej. Laptop HP Nro. 3">
                     </div>
 
-                    <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition shadow cursor-pointer">
-                        💸 Registrar y Confirmar Venta
+                    <!-- Campo: Monto -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Monto del Préstamo / Alquiler ($)</label>
+                        <input type="number" id="montoPrestamo" required min="0" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" placeholder="0.00">
+                    </div>
+
+                    <!-- Campo: Estado de Pago -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-1">Estado Financiero Inicial</label>
+                        <select id="estadoPago" class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="Pendiente">Pendiente de Pago</option>
+                            <option value="Pagado">Pagado Totalmente</option>
+                        </select>
+                    </div>
+
+                    <!-- Botón de Acción -->
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-4 rounded-lg transition duration-200 shadow-sm">
+                        Guardar Registro de Respaldo
                     </button>
                 </form>
             </div>
-        </section>
 
-        <!-- ========================================== -->
-        <!-- PESTAÑA 2: VISTA DUEÑO                     -->
-        <!-- ========================================== -->
-        <section id="seccion-dueno" class="hidden space-y-6">
-            <!-- Formulario de actualización de existencias -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-red-200">
-                <h2 class="text-xl font-bold text-red-900 mb-4 flex items-center">
-                    <span class="mr-2">⚙️</span> Consola de Inventario Base (Importaciones Chile)
-                </h2>
-                <form onsubmit="agregarOEditarMercaderia(event)" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo / Celular</label>
-                        <input type="text" id="invModelo" required placeholder="Ej: iPhone 15 Pro" class="w-full p-2 border border-gray-300 rounded text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sucursal</label>
-                        <select id="invSucursal" class="w-full p-2 border border-gray-300 rounded text-sm bg-white">
-                            <option value="Central">Central</option>
-                            <option value="Norte">Norte</option>
-                            <option value="Mall">Mall</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Costo en Chile (USD $)</label>
-                        <input type="number" id="invCosto" required step="0.01" placeholder="800" class="w-full p-2 border border-gray-300 rounded text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cantidad / Stock</label>
-                        <input type="number" id="invStock" required min="0" placeholder="10" class="w-full p-2 border border-gray-300 rounded text-sm">
-                    </div>
-                    <div>
-                        <button type="submit" class="w-full bg-red-700 text-white p-2 rounded text-sm font-bold hover:bg-red-800 transition cursor-pointer">
-                            💾 Guardar / Actualizar
-                        </button>
-                    </div>
-                </form>
-            </div>
+            <!-- COLUMNA 2 Y 3: TABLA DE RESPALDO Y CONTROL (Ocupa 2 de 3 partes) -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <div class="flex justify-between items-center mb-4 border-b pb-2">
+                    <h2 class="text-xl font-semibold text-gray-700">Bitácora de Préstamos Activos</h2>
+                    <span id="contadorPrestamos" class="bg-indigo-100 text-indigo-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">0 Registros</span>
+                </div>
 
-            <!-- Tabla de inventario -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-md font-bold text-gray-800 mb-3">Stock Activo y Márgenes de Importación</h3>
+                <!-- TABLA RESPONSIVA -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-800 text-white text-xs uppercase">
-                                <th class="p-3 rounded-l">Modelo</th>
-                                <th class="p-3">Sucursal</th>
-                                <th class="p-3">Costo Base (Chile)</th>
-                                <th class="p-3">Stock Disponible</th>
-                                <th class="p-3 rounded-r text-center">Acciones</th>
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-3">Fecha/Hora</th>
+                                <th class="px-4 py-3">Cliente</th>
+                                <th class="px-4 py-3">Equipo</th>
+                                <th class="px-4 py-3">Monto</th>
+                                <th class="px-4 py-3">Estado</th>
+                                <th class="px-4 py-3 text-right">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tablaInventarioDueno" class="text-sm divide-y divide-gray-200">
-                            <!-- Inyección dinámica JS -->
+                        <tbody id="tablaCuerpo">
+                            <!-- Los registros agregados por el usuario aparecerán aquí dinámicamente -->
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </section>
 
-        <!-- ========================================== -->
-        <!-- PESTAÑA 3: REPORTES DE VENTAS              -->
-        <!-- ========================================== -->
-        <section id="seccion-reportes" class="hidden space-y-6">
-            <!-- KPIs CON LA NUEVA MÉTRICA DE GANANCIA PURA ACUMULADA -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
-                    <span class="text-xs font-bold text-gray-500 uppercase">Ventas Totales Brutas</span>
-                    <h3 id="kpiVentasTotales" class="text-2xl font-black text-slate-900 mt-1">0.00</h3>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500">
-                    <span class="text-xs font-bold text-emerald-600 uppercase">Ganancia Neta Real Tienda</span>
-                    <h3 id="kpiGananciaTotal" class="text-2xl font-black text-emerald-900 mt-1">0.00</h3>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
-                    <span class="text-xs font-bold text-amber-500 uppercase">Comisiones Totales Pagadas</span>
-                    <h3 id="kpiComisionesTotales" class="text-2xl font-black text-amber-900 mt-1">0.00</h3>
+                <!-- Mensaje de tabla vacía -->
+                <div id="mensajeVacio" class="text-center py-8 text-gray-400">
+                    No tienes préstamos registrados en este momento. ¡Excelente control!
                 </div>
             </div>
 
-            <!-- TABLA DE HISTORIAL AVANZADO -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">Auditoría de Ventas y Rendimiento de Utilidades</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase border-b border-gray-200">
-                                <th class="p-3">Vendedor</th>
-                                <th class="p-3">Producto / Sucursal</th>
-                                <th class="p-3">Tipo</th>
-                                <th class="p-3">Cant.</th>
-                                <th class="p-3">Venta Total</th>
-                                <th class="p-3 text-blue-600">Ganancia Equipo</th>
-                                <th class="p-3 text-emerald-600">Comisión (De la Ganancia)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaReportes" class="text-sm divide-y divide-gray-100">
-                            <tr id="filaVacia">
-                                <td colspan="7" class="p-4 text-center text-gray-400 italic">No hay registros operacionales en este ciclo.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+        </div>
+    </div>
 
-    </main>
-
-    <!-- PROGRAMACIÓN LOGICA DEL SISTEMA -->
+    <!-- SCRIPT DE LÓGICA E INTELIGENCIA DEL SISTEMA -->
     <script>
-        // Simulador de Base de Datos Maestra
-        let inventarioProductos = [
-            { modelo: "iPhone 15 Pro", sucursal: "Central", costoUsd: 800, stock: 15 },
-            { modelo: "Samsung Galaxy S24", sucursal: "Norte", costoUsd: 700, stock: 8 },
-            { modelo: "Xiaomi Redmi Note 13", sucursal: "Mall", costoUsd: 200, stock: 25 }
-        ];
+        // Arreglo global para almacenar los préstamos en memoria
+        let listaPrestamos = [];
 
-        let baseDeDatosVentas = [];
-        const PIN_SECRETO = "1234";
-
-        // GESTIÓN DE NAVEGACIÓN PROTEGIDA
-        function cambiarPestana(pestanaObjetivo) {
-            if (pestanaObjetivo === 'dueno' || pestanaObjetivo === 'reportes') {
-                const pin = prompt(`🔑 ACCESO PRIVADO: Ingrese el PIN de seguridad de Administración:`);
-                if (pin !== PIN_SECRETO) {
-                    alert("⚠️ Código erróneo. Acceso denegado.");
-                    return;
-                }
+        // Al cargar la página, recuperamos la información previamente guardada en el navegador
+        document.addEventListener("DOMContentLoaded", () => {
+            const datosGuardados = localStorage.getItem("prestamos_respaldo");
+            if (datosGuardados) {
+                listaPrestamos = JSON.parse(datosGuardados);
+                actualizarTabla();
             }
+        });
 
-            document.getElementById('seccion-vendedor').classList.add('hidden');
-            document.getElementById('seccion-dueno').classList.add('hidden');
-            document.getElementById('seccion-reportes').classList.add('hidden');
+        // Capturamos el formulario para procesar el envío de datos
+        const form = document.getElementById("formPrestamo");
+        form.addEventListener("submit", (evento) => {
+            evento.preventDefault(); // Evitamos que la página se recargue automáticamente
 
-            const botones = ['btn-vendedor', 'btn-dueno', 'btn-reportes'];
-            botones.forEach(id => {
-                document.getElementById(id).className = "px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700";
-            });
-
-            if (pestanaObjetivo === 'vendedor') {
-                document.getElementById('seccion-vendedor').classList.remove('hidden');
-                document.getElementById('btn-vendedor').className = "px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow";
-            } else if (pestanaObjetivo === 'dueno') {
-                document.getElementById('seccion-dueno').classList.remove('hidden');
-                document.getElementById('btn-dueno').className = "px-4 py-2 rounded text-sm font-bold bg-red-600 text-white shadow";
-                renderizarInventarioDueno();
-            } else if (pestanaObjetivo === 'reportes') {
-                document.getElementById('seccion-reportes').classList.remove('hidden');
-                document.getElementById('btn-reportes').className = "px-4 py-2 rounded text-sm font-bold bg-amber-600 text-white shadow";
-                actualizarTablaYKPIs();
-            }
-        }
-
-        // CONTROL DINÁMICO DE SELECTORES
-        function actualizarSelectorProductosVendedor() {
-            const select = document.getElementById('ventaModelo');
-            select.innerHTML = ''; 
-
-            inventarioProductos.forEach((prod, indice) => {
-                const opcion = document.createElement('option');
-                opcion.value = prod.modelo;
-                opcion.setAttribute('data-costo', prod.costoUsd);
-                opcion.setAttribute('data-sucursal', prod.sucursal);
-                opcion.setAttribute('data-indice', indice);
-                opcion.textContent = `${prod.modelo} (Stock: ${prod.stock} - Suc. ${prod.sucursal})`;
-                select.appendChild(opcion);
-            });
-        }
-
-        function forzarAutofillYRecalcular() {
-            const inputPrecio = document.getElementById('ventaPrecioCobrado');
-            inputPrecio.dataset.manual = "false"; 
-            actualizarPreciosVenta(false);
-        }
-
-        // ARQUITECTURA DE CÁLCULO FINANCIERO (SOLUCIÓN AL REQUISITO)
-        function actualizarPreciosVenta(esModificacionManual = false) {
-            const select = document.getElementById('ventaModelo');
-            if (!select.options[select.selectedIndex]) return;
-
-            // 1. Obtener datos base
-            const costoUsd = parseFloat(select.options[select.selectedIndex].getAttribute('data-costo'));
-            const tipoVenta = document.getElementById('ventaTipo').value;
-            const cantidad = parseInt(document.getElementById('ventaCantidad').value) || 0;
-            const tipoCambio = parseFloat(document.getElementById('ventaTipoCambio').value) || 0;
-            const inputPrecioCobrado = document.getElementById('ventaPrecioCobrado');
-
-            if (esModificacionManual) {
-                inputPrecioCobrado.dataset.manual = "true";
-            }
-
-            // Generar precio sugerido inicial si el usuario no ha digitado manualmente
-            if (inputPrecioCobrado.dataset.manual !== "true") {
-                const costoLocalUnitario = costoUsd * tipoCambio;
-                const margenSugerido = tipoVenta === 'Unidad' ? 1.20 : 1.08; 
-                inputPrecioCobrado.value = Math.round(costoLocalUnitario * margenSugerido);
-            }
-
-            // 2. Calcular los totales de la venta
-            const precioCobradoUnitario = parseFloat(inputPrecioCobrado.value) || 0;
-            const totalCobrado = precioCobradoUnitario * cantidad;
-
-            // 3. CALCULO DE LA GANANCIA PURA (Ecuación solicitada)
-            const costoTotalEnMonedaLocal = (costoUsd * tipoCambio) * cantidad;
-            const gananciaPuraTotal = totalCobrado - costoTotalEnMonedaLocal;
-
-            // 4. CALCULO DE COMISIÓN EXCLUSIVAMENTE SOBRE LA GANANCIA
-            let comisionTotal = 0;
-            if (gananciaPuraTotal > 0) {
-                // Modificador de comisión: 10% para unidad, 3% para mayorista
-                const porcentajeComision = tipoVenta === 'Unidad' ? 0.10 : 0.03;
-                comisionTotal = gananciaPuraTotal * porcentajeComision;
-            }
-
-            // Pintar resultados financieros en el dashboard del empleado
-            document.getElementById('txtTotalCobrar').textContent = totalCobrado.toFixed(2);
-            document.getElementById('txtGananciaPura').textContent = gananciaPuraTotal.toFixed(2);
-            document.getElementById('txtComisionVendedor').textContent = comisionTotal.toFixed(2);
-        }
-
-        // REGISTRO DE TRANSACCIÓN COMERCIAL CON SALVAGUARDA DE STOCK
-        function registrarVenta(event) {
-            event.preventDefault();
-
-            const vendedor = document.getElementById('ventaVendedor').value;
-            const select = document.getElementById('ventaModelo');
-            const modelo = select.value;
-            const sucursal = select.options[select.selectedIndex].getAttribute('data-sucursal');
-            const indiceInventario = parseInt(select.options[select.selectedIndex].getAttribute('data-indice'));
-            const tipo = document.getElementById('ventaTipo').value;
-            const cantidad = parseInt(document.getElementById('ventaCantidad').value);
+            // Capturamos los valores que el usuario escribió en la pantalla
+            const cliente = document.getElementById("nombreCliente").value;
+            const equipo = document.getElementById("equipoPrestado").value;
+            const monto = document.getElementById("montoPrestamo").value;
+            const estado = document.getElementById("estadoPago").value;
             
-            // Extraemos los valores monetarios exactos calculados
-            const totalCobrado = parseFloat(document.getElementById('txtTotalCobrar').textContent);
-            const gananciaRegistrada = parseFloat(document.getElementById('txtGananciaPura').textContent);
-            const comision = parseFloat(document.getElementById('txtComisionVendedor').textContent);
+            // Generamos una marca de tiempo legible (Fecha y Hora actual)
+            const ahora = new Date();
+            const fechaFormateada = ahora.toLocaleDateString() + ' ' + ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-            if (inventarioProductos[indiceInventario].stock < cantidad) {
-                alert(`❌ ERROR DE INVENTARIO: Stock insuficiente en la Sucursal ${sucursal}.`);
+            // Creamos el objeto de negocio para este préstamo específico
+            const nuevoPrestamo = {
+                id: Date.now(), // ID único basado en milisegundos para identificar este registro exacto
+                fecha: fechaFormateada,
+                cliente: cliente,
+                equipo: equipo,
+                monto: parseFloat(monto).toFixed(2),
+                estado: estado
+            };
+
+            // Lo añadimos a nuestra lista, guardamos y actualizamos la interfaz de usuario
+            listaPrestamos.push(nuevoPrestamo);
+            guardarEnAlmacenamiento();
+            actualizarTabla();
+
+            // Limpiamos el formulario para el siguiente ingreso
+            form.reset();
+        });
+
+        // Función encargada de persistir la información en el almacenamiento local del navegador (LocalStorage)
+        function guardarEnAlmacenamiento() {
+            localStorage.setItem("prestamos_respaldo", JSON.stringify(listaPrestamos));
+        }
+
+        // Función encargada de redibujar la tabla en pantalla con los datos actualizados
+        function actualizarTabla() {
+            const cuerpo = document.getElementById("tablaCuerpo");
+            const mensajeVacio = document.getElementById("mensajeVacio");
+            const contador = document.getElementById("contadorPrestamos");
+            
+            // Limpiamos filas anteriores para evitar duplicados visuales
+            cuerpo.innerHTML = "";
+
+            // Manejo visual si no hay datos
+            if (listaPrestamos.length === 0) {
+                mensajeVacio.classList.remove("hidden");
+                contador.textContent = "0 Registros";
                 return;
-            }
-
-            // Descontar existencias del inventario
-            inventarioProductos[indiceInventario].stock -= cantidad;
-
-            // Guardamos el registro completo incluyendo la GANANCIA PURA del equipo
-            baseDeDatosVentas.push({ 
-                vendedor, 
-                modelo, 
-                sucursal, 
-                tipo, 
-                cantidad, 
-                totalCobrado, 
-                gananciaRegistrada, // Guardado estratégico de la utilidad pura
-                comision 
-            });
-
-            alert(`💰 ¡Venta procesada con éxito! La utilidad neta registrada para este equipo fue de: ${gananciaRegistrada.toFixed(2)}`);
-
-            // Limpieza y refresco
-            document.getElementById('ventaVendedor').value = '';
-            document.getElementById('ventaPrecioCobrado').dataset.manual = "false";
-            actualizarSelectorProductosVendedor();
-            actualizarPreciosVenta(false);
-        }
-
-        // EDICIÓN DE INVENTARIO DEL DUEÑO
-        function agregarOEditarMercaderia(event) {
-            event.preventDefault();
-
-            const modelo = document.getElementById('invModelo').value.trim();
-            const sucursal = document.getElementById('invSucursal').value;
-            const costoUsd = parseFloat(document.getElementById('invCosto').value);
-            const stock = parseInt(document.getElementById('invStock').value);
-
-            const indiceExistente = inventarioProductos.findIndex(p => p.modelo.toLowerCase() === modelo.toLowerCase() && p.sucursal === sucursal);
-
-            if (indiceExistente !== -1) {
-                inventarioProductos[indiceExistente].costoUsd = costoUsd;
-                inventarioProductos[indiceExistente].stock = stock;
-                alert(`🔄 Inventario Base Actualizado.`);
             } else {
-                inventarioProductos.push({ modelo, sucursal, costoUsd, stock });
-                alert(`✨ Nueva Importación añadida con éxito.`);
+                mensajeVacio.classList.add("hidden");
+                contador.textContent = `${listaPrestamos.length} Registros`;
             }
 
-            document.getElementById('invModelo').value = '';
-            document.getElementById('invCosto').value = '';
-            document.getElementById('invStock').value = '';
-            
-            renderizarInventarioDueno();
-            actualizarSelectorProductosVendedor();
-        }
+            // Recorremos cada préstamo para construir las filas de la tabla
+            listaPrestamos.forEach((prestamo) => {
+                const fila = document.createElement("tr");
+                fila.className = "border-b hover:bg-gray-50 text-gray-900";
 
-        function renderizarInventarioDueno() {
-            const tbody = document.getElementById('tablaInventarioDueno');
-            tbody.innerHTML = '';
+                // Definimos el color de la etiqueta según el estado de pago (Verde = Pagado, Rojo = Pendiente)
+                const colorEstado = prestamo.estado === "Pagado" 
+                    ? "bg-green-100 text-green-800" 
+                    : "bg-red-100 text-red-800";
 
-            inventarioProductos.forEach((prod, index) => {
-                const fila = document.createElement('tr');
-                fila.className = "hover:bg-slate-50 border-b border-gray-100";
+                // Inyectamos la estructura HTML de la fila de forma segura
                 fila.innerHTML = `
-                    <td class="p-3 font-semibold text-slate-800">${prod.modelo}</td>
-                    <td class="p-3"><span class="bg-slate-100 px-2.5 py-1 rounded text-xs font-mono font-bold">${prod.sucursal}</span></td>
-                    <td class="p-3 font-mono font-bold text-red-600">$${prod.costoUsd.toFixed(2)} USD</td>
-                    <td class="p-3 font-mono font-bold text-slate-900">${prod.stock} Unid.</td>
-                    <td class="p-3 text-center">
-                        <button onclick="cargarFichaParaEditar(${index})" class="bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs font-bold hover:bg-blue-100 cursor-pointer">
-                            ✏️ Editar
+                    <td class="px-4 py-3 text-xs text-gray-500">${prestamo.fecha}</td>
+                    <td class="px-4 py-3 font-medium">${prestamo.cliente}</td>
+                    <td class="px-4 py-3">${prestamo.equipo}</td>
+                    <td class="px-4 py-3 font-semibold">$${prestamo.monto}</td>
+                    <td class="px-4 py-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${colorEstado}">
+                            ${prestamo.estado}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3 text-right space-x-2">
+                        <button onclick="cambiarEstado(${prestamo.id})" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 py-1 px-2 rounded border border-gray-300 transition">
+                            Cambiar Estado
+                        </button>
+                        <button onclick="eliminarPrestamo(${prestamo.id})" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 py-1 px-2 rounded transition">
+                            Borrar
                         </button>
                     </td>
                 `;
-                tbody.appendChild(fila);
+                cuerpo.appendChild(fila);
             });
         }
 
-        function cargarFichaParaEditar(index) {
-            const prod = inventarioProductos[index];
-            document.getElementById('invModelo').value = prod.modelo;
-            document.getElementById('invSucursal').value = prod.sucursal;
-            document.getElementById('invCosto').value = prod.costoUsd;
-            document.getElementById('invStock').value = prod.stock;
+        // Función de negocio para alternar el estado de pago rápidamente al hacer clic en un botón
+        function cambiarEstado(id) {
+            listaPrestamos = listaPrestamos.map((p) => {
+                if (p.id === id) {
+                    p.estado = p.estado === "Pendiente" ? "Pagado" : "Pendiente";
+                }
+                return p;
+            });
+            guardarEnAlmacenamiento();
+            actualizarTabla();
         }
 
-        // AUDITORÍA Y RENDERIZACIÓN DE LOS REPORTES PROTEGIDOS
-        function actualizarTablaYKPIs() {
-            const tabla = document.getElementById('tablaReportes');
-            const filaVacia = document.getElementById('filaVacia');
-            tabla.innerHTML = '';
-
-            if (baseDeDatosVentas.length === 0) {
-                tabla.appendChild(filaVacia);
-                document.getElementById('kpiVentasTotales').textContent = "0.00";
-                document.getElementById('kpiGananciaTotal').textContent = "0.00";
-                document.getElementById('kpiComisionesTotales').textContent = "0.00";
-                return;
+        // Función para eliminar un registro erróneo o un préstamo completamente archivado
+        function eliminarPrestamo(id) {
+            if (confirm("¿Estás seguro de que deseas eliminar este respaldo de préstamo?")) {
+                listaPrestamos = listaPrestamos.filter((p) => p.id !== id);
+                guardarEnAlmacenamiento();
+                actualizarTabla();
             }
-
-            let acumuladoVentasBrutas = 0;
-            let acumuladoGananciaPura = 0;
-            let acumuladoComisiones = 0;
-
-            baseDeDatosVentas.forEach(venta => {
-                acumuladoVentasBrutas += venta.totalCobrado;
-                acumuladoGananciaPura += venta.gananciaRegistrada;
-                acumuladoComisiones += venta.comision;
-
-                const fila = document.createElement('tr');
-                fila.className = "hover:bg-slate-50";
-                fila.innerHTML = `
-                    <td class="p-3 font-medium">${venta.vendedor}</td>
-                    <td class="p-3 text-xs text-gray-700">${venta.modelo} <span class="text-gray-400">(${venta.sucursal})</span></td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-black ${venta.tipo === 'Unidad' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">${venta.tipo}</span></td>
-                    <td class="p-3 font-mono font-bold">${venta.cantidad}</td>
-                    <td class="p-3 font-bold text-slate-500">${venta.totalCobrado.toFixed(2)}</td>
-                    <!-- Aquí se muestra la Ganancia del Equipo solicitada -->
-                    <td class="p-3 font-bold text-blue-600">${venta.gananciaRegistrada.toFixed(2)}</td>
-                    <td class="p-3 text-emerald-600 font-black">${venta.comision.toFixed(2)}</td>
-                `;
-                tabla.appendChild(fila);
-            });
-
-            // Actualizamos los bloques informativos de dirección
-            document.getElementById('kpiVentasTotales').textContent = acumuladoVentasBrutas.toFixed(2);
-            document.getElementById('kpiGananciaTotal').textContent = acumuladoGananciaPura.toFixed(2);
-            document.getElementById('kpiComisionesTotales').textContent = acumuladoComisiones.toFixed(2);
         }
-
-        // Inicializar la app
-        actualizarSelectorProductosVendedor();
-        actualizarPreciosVenta(false);
     </script>
 </body>
 </html>
