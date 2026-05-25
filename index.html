@@ -12,7 +12,7 @@
         <div class="container mx-auto flex justify-between items-center flex-wrap gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-blue-400">HARVARD TECH MOBILES</h1>
-                <p class="text-xs text-gray-400 font-mono">Enterprise Resource Planning (ERP) v5.0 - Sistema Unificado</p>
+                <p class="text-xs text-gray-400 font-mono">Enterprise Resource Planning (ERP) v5.5 - Conexión Google Sheets</p>
             </div>
             <nav class="flex space-x-2 flex-wrap gap-y-2">
                 <button onclick="cambiarPestana('vendedor')" id="btn-vendedor" class="px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow">
@@ -102,7 +102,7 @@
                 <form onsubmit="registrarConsignacion(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Responsable / Quién Recibe</label>
-                        <input type="text" id="consCliente" required placeholder="Ej: Distribuidora Oriente o Promotor Juan" class="w-full p-2 border border-gray-300 rounded text-sm">
+                        <input type="text" id="consCliente" required placeholder="Ej: Distribuidora Oriente" class="w-full p-2 border border-gray-300 rounded text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Seleccionar Celular del Stock</label>
@@ -245,10 +245,10 @@
         ];
 
         let baseDeDatosVentas = [];
-        let baseDeDatosConsignaciones = []; // Nueva base de datos operativa para préstamos
+        let baseDeDatosConsignaciones = []; 
         const PIN_SECRETO = "1234";
 
-        // SISTEMA DE SEGURIDAD Y PESTAÑAS
+        // SISTERMA DE SEGURIDAD Y PESTAÑAS
         function cambiarPestana(pestanaObjetivo) {
             if (pestanaObjetivo === 'dueno' || pestanaObjetivo === 'reportes') {
                 const pin = prompt(`🔑 ACCESO PRIVADO: Ingrese el PIN de Administración:`);
@@ -258,7 +258,6 @@
                 }
             }
 
-            // Ocultar paneles
             document.getElementById('seccion-vendedor').classList.add('hidden');
             document.getElementById('seccion-consignacion').classList.add('hidden');
             document.getElementById('seccion-dueno').classList.add('hidden');
@@ -269,14 +268,13 @@
                 document.getElementById(id).className = "px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700";
             });
 
-            // Mostrar selección
             if (pestanaObjetivo === 'vendedor') {
                 document.getElementById('seccion-vendedor').classList.remove('hidden');
                 document.getElementById('btn-vendedor').className = "px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow";
             } else if (pestanaObjetivo === 'consignacion') {
                 document.getElementById('seccion-consignacion').classList.remove('hidden');
                 document.getElementById('btn-consignacion').className = "px-4 py-2 rounded text-sm font-bold bg-indigo-600 text-white shadow";
-                renderizarConsignaciones();
+                renderizerConsignaciones();
             } else if (pestanaObjetivo === 'dueno') {
                 document.getElementById('seccion-dueno').classList.remove('hidden');
                 document.getElementById('btn-dueno').className = "px-4 py-2 rounded text-sm font-bold bg-red-600 text-white shadow";
@@ -293,13 +291,14 @@
             const selectVenta = document.getElementById('ventaModelo');
             const selectCons = document.getElementById('consModelo');
             
+            if (!selectVenta || !selectCons) return;
+            
             selectVenta.innerHTML = ''; 
             selectCons.innerHTML = '';
 
             inventarioProductos.forEach((prod, indice) => {
                 const txtContenido = `${prod.modelo} (Stock: ${prod.stock} - Suc. ${prod.sucursal})`;
                 
-                // Opción para módulo ventas
                 const optVenta = document.createElement('option');
                 optVenta.value = prod.modelo;
                 optVenta.setAttribute('data-costo', prod.costoUsd);
@@ -308,7 +307,6 @@
                 optVenta.textContent = txtContenido;
                 selectVenta.appendChild(optVenta);
 
-                // Opción para módulo consignaciones
                 const optCons = document.createElement('option');
                 optCons.value = prod.modelo;
                 optCons.setAttribute('data-indice', indice);
@@ -322,7 +320,7 @@
             actualizarPreciosVenta(false);
         }
 
-        // LÓGICA DE CONTROL DE MÁRGENES Y COMISIONES (MÓDULO VENDEDOR)
+        // CONTROL DE MÁRGENES Y COMISIONES 
         function actualizarPreciosVenta(esModificacionManual = false) {
             const select = document.getElementById('ventaModelo');
             if (!select || !select.options[select.selectedIndex]) return;
@@ -357,12 +355,12 @@
             document.getElementById('txtComisionVendedor').textContent = comisionTotal.toFixed(2);
         }
 
-        // REGISTRO DE TRANSACCIÓN COMERCIAL CON CONEXIÓN INMEDIATA A GOOGLE SHEETS
+        // ENVÍO DE DATOS HACIA LA API DE GOOGLE SHEETS
         function registrarVenta(event) {
             event.preventDefault();
 
-            // Reemplaza el texto de abajo con la URL completa que copiaste en el Paso 2
-            const URL_MI_GOOGLE_API = "https://script.google.com/macros/s/AKfycbzSleobJjk5kBKDNhSDfmhabf87z5mjMI-ScnkSusQrgDHQnkhsoNjjLXdy91BEMuXWgQ/exec";
+            // ⚠️ PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT:
+            const URL_MI_GOOGLE_API = "PEGA_AQUI_TU_URL_DE_GOOGLE_APPS_SCRIPT";
 
             const vendedor = document.getElementById('ventaVendedor').value;
             const select = document.getElementById('ventaModelo');
@@ -381,13 +379,10 @@
                 return;
             }
 
-            // Descontar existencias localmente
             inventarioProductos[indiceInventario].stock -= cantidad;
-
-            // Guardar localmente en el arreglo de reportes
             baseDeDatosVentas.push({ vendedor, modelo, sucursal, tipo, cantidad, totalCobrado, gananciaRegistrada, comision });
 
-            // ENVIAR DATOS A GOOGLE SHEETS EN SEGUNDO PLANO (Ruta Ágil)
+            // Objeto formateado para la base de datos externa
             const datosParaNube = {
                 vendedor: vendedor,
                 modelo: modelo,
@@ -398,44 +393,27 @@
                 gananciaRegistrada: gananciaRegistrada
             };
 
-            // Ejecutamos una petición web asíncrona hacia tu Excel
-            fetch(URL_MI_GOOGLE_API, {
-                method: 'POST',
-                mode: 'no-cors', // Evita bloqueos de seguridad de navegadores convencionales
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosParaNube)
-            })
-            .then(() => {
-                console.log("Sincronización en la nube completada.");
-            })
-            .catch(error => {
-                console.error("Fallo de red al enviar a la nube:", error);
-            });
+            // Ejecución del disparo de red
+            if(URL_MI_GOOGLE_API !== "https://script.google.com/macros/s/AKfycbzSleobJjk5kBKDNhSDfmhabf87z5mjMI-ScnkSusQrgDHQnkhsoNjjLXdy91BEMuXWgQ/exec") {
+                fetch(URL_MI_GOOGLE_API, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosParaNube)
+                })
+                .then(() => console.log("Sincronizado con Google Sheets."))
+                .catch(err => console.error("Error de red:", err));
+            }
 
-            // Notificación al vendedor
-            alert(`💰 ¡Venta procesada con éxito!\nLa utilidad neta de ${gananciaRegistrada.toFixed(2)} ha sido respaldada en la base de datos central.`);
-
-            // Limpieza ordinaria del formulario
+            alert(`💰 ¡Venta procesada con éxito!\nLa utilidad neta de ${gananciaRegistrada.toFixed(2)} ha sido respaldada.`);
+            
             document.getElementById('ventaVendedor').value = '';
             document.getElementById('ventaPrecioCobrado').dataset.manual = "false";
             actualizarSelectoresDeProductos();
             actualizarPreciosVenta(false);
         }
 
-            inventarioProductos[indiceInventario].stock -= cantidad;
-
-            baseDeDatosVentas.push({ vendedor, modelo, sucursal, tipo, cantidad, totalCobrado, gananciaRegistrada, comision });
-
-            alert("💰 Venta procesada y stock actualizado de forma automática.");
-            document.getElementById('ventaVendedor').value = '';
-            document.getElementById('ventaPrecioCobrado').dataset.manual = "false";
-            actualizarSelectoresDeProductos();
-            actualizarPreciosVenta(false);
-        }
-
-        // ==========================================
-        // LÓGICA DE NEGOCIO: MÓDULO CONSIGNACIONES
-        // ==========================================
+        // REGISTRO DE CONSIGNACIONES
         function registrarConsignacion(event) {
             event.preventDefault();
 
@@ -446,13 +424,11 @@
 
             const producto = inventarioProductos[indiceInventario];
 
-            // Validamos stock en el inventario antes de despachar el préstamo
             if (producto.stock < cantidad) {
-                alert(`❌ OPERACIÓN RECHAZADA: No puedes prestar ${cantidad} unidades. Solo quedan ${producto.stock} disponibles en Sucursal ${producto.sucursal}.`);
+                alert(`❌ OPERACIÓN RECHAZADA: Stock insuficiente en Sucursal ${producto.sucursal}.`);
                 return;
             }
 
-            // DESCUENTO AUTOMÁTICO DE STOCK
             inventarioProductos[indiceInventario].stock -= cantidad;
 
             const ahora = new Date();
@@ -464,12 +440,12 @@
                 cliente: cliente,
                 modelo: producto.modelo,
                 sucursal: producto.sucursal,
-                indiceOriginal: indiceInventario, // Guardamos para saber a dónde devolver si cancelan
+                indiceOriginal: indiceInventario,
                 cantidad: cantidad,
                 estado: "Pendiente"
             });
 
-            alert(`🤝 Consignación registrada. Se retiraron ${cantidad} unidades del inventario de la Sucursal ${producto.sucursal}.`);
+            alert(`🤝 Consignación registrada. Se retiraron ${cantiad = cantidad} unidades del stock.`);
             document.getElementById('consCliente').value = '';
             actualizarSelectoresDeProductos();
             renderizerConsignaciones();
@@ -477,6 +453,7 @@
 
         function renderizerConsignaciones() {
             const tbody = document.getElementById('tablaConsignaciones');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             if (baseDeDatosConsignaciones.length === 0) {
@@ -493,7 +470,7 @@
                     <td class="p-3 text-xs text-gray-500">${c.fecha}</td>
                     <td class="p-3 font-semibold text-slate-800">${c.cliente}</td>
                     <td class="p-3">${c.modelo} <span class="text-xs text-gray-400">(${c.sucursal})</span></td>
-                    <td class="p-3 font-mono font-bold">${c.cantidad} Unid.</td>
+                    <td class="p-3 font-mono font-bold">${c.text = c.cantidad} Unid.</td>
                     <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${colorEst}">${c.estado}</span></td>
                     <td class="p-3 text-center space-x-2">
                         <button onclick="alternarEstadoConsignacion(${c.id})" class="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded border hover:bg-slate-200 cursor-pointer">
@@ -516,26 +493,18 @@
             renderizerConsignaciones();
         }
 
-        // REINTEGRO AUTOMÁTICO AL INVENTARIO SI SE CANCELA EL PRÉSTAMO
         function devolverEquiposAInventario(id) {
             const registro = baseDeDatosConsignaciones.find(c => c.id === id);
-            if (confirm(`¿Confirmas que devolvieron las ${registro.cantidad} unidades de ${registro.modelo}? El stock de la sucursal se restaurará.`)) {
-                
-                // Devolvemos las unidades al producto original
+            if (confirm(`¿Confirmas que devolvieron las ${registro.cantidad} unidades?`)) {
                 inventarioProductos[registro.indiceOriginal].stock += registro.cantidad;
-                
-                // Eliminamos la consignación activa de la bitácora de tránsito
                 baseDeDatosConsignaciones = baseDeDatosConsignaciones.filter(c => c.id !== id);
-                
-                alert("🔙 Equipos reintegrados exitosamente al inventario general.");
+                alert("🔙 Equipos reintegrados exitosamente.");
                 actualizarSelectoresDeProductos();
                 renderizerConsignaciones();
             }
         }
 
-        // ==========================================
-        // MÓDULO DUEÑO E INVENTARIO BASE
-        // ==========================================
+        // CONTROL DEL DUEÑO
         function agregarOEditarMercaderia(event) {
             event.preventDefault();
 
@@ -549,22 +518,23 @@
             if (indiceExistente !== -1) {
                 inventarioProductos[indiceExistente].costoUsd = costoUsd;
                 inventarioProductos[indiceExistente].stock = stock;
-                alert("🔄 Inventario Base Actualizado.");
+                alert("🔄 Inventario Actualizado.");
             } else {
                 inventarioProductos.push({ modelo, sucursal, costoUsd, stock });
-                alert("✨ Nueva Importación añadida.");
+                alert("✨ Nueva Importación registrada.");
             }
 
             document.getElementById('invModelo').value = '';
             document.getElementById('invCosto').value = '';
             document.getElementById('invStock').value = '';
             
-            renderizarInventarioDueno();
+            renderizarInventoryDueno();
             actualizarSelectoresDeProductos();
         }
 
         function renderizarInventarioDueno() {
             const tbody = document.getElementById('tablaInventarioDueno');
+            if(!tbody) return;
             tbody.innerHTML = '';
 
             inventarioProductos.forEach((prod, index) => {
@@ -593,9 +563,10 @@
             document.getElementById('invStock').value = prod.stock;
         }
 
-        // AUDITORÍA Y KPIs
+        // REPORTES
         function actualizarTablaYKPIs() {
             const tabla = document.getElementById('tablaReportes');
+            if(!tabla) return;
             tabla.innerHTML = '';
 
             if (baseDeDatosVentas.length === 0) {
@@ -634,7 +605,7 @@
             document.getElementById('kpiComisionesTotales').textContent = acumuladoComisiones.toFixed(2);
         }
 
-        // Ejecución inicial automática
+        // Ejecución inicial automática al encender la app
         actualizarSelectoresDeProductos();
         actualizarPreciosVenta(false);
     </script>
