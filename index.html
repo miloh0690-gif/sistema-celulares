@@ -90,3 +90,352 @@
         <section id="seccion-dueno" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-red-200">
                 <h2 class="text-xl font-bold text-red-900 mb-4 flex items-center">
+                    <span class="mr-2">⚙️</span> Consola de Inventario Base (Importaciones Chile)
+                </h2>
+                
+                <form onsubmit="agregarOEditarMercaderia(event)" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo / Celular</label>
+                        <input type="text" id="invModelo" required placeholder="Ej: iPhone 15 Pro" class="w-full p-2 border border-gray-300 rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sucursal</label>
+                        <select id="invSucursal" class="w-full p-2 border border-gray-300 rounded text-sm bg-white">
+                            <option value="Central">Central</option>
+                            <option value="Norte">Norte</option>
+                            <option value="Mall">Mall</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Costo en Chile (USD $)</label>
+                        <input type="number" id="invCosto" required step="0.01" placeholder="800" class="w-full p-2 border border-gray-300 rounded text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cantidad / Stock</label>
+                        <input type="number" id="invStock" required min="0" placeholder="10" class="w-full p-2 border border-gray-300 rounded text-sm">
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-red-700 text-white p-2 rounded text-sm font-bold hover:bg-red-800 transition cursor-pointer">
+                            💾 Guardar / Actualizar
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="text-md font-bold text-gray-800 mb-3">Stock Activo y Márgenes de Importación</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-800 text-white text-xs uppercase">
+                                <th class="p-3 rounded-l">Modelo del Dispositivo</th>
+                                <th class="p-3">Sucursal Asignada</th>
+                                <th class="p-3">Costo Base (Chile)</th>
+                                <th class="p-3">Unidades Disponibles</th>
+                                <th class="p-3 rounded-r text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaInventarioDueno" class="text-sm divide-y divide-gray-200">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="seccion-reportes" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Volumen Bruto Ventas por Unidad</span>
+                    <h3 id="kpiUnidad" class="text-2xl font-black text-blue-900 mt-1">0.00</h3>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Volumen Bruto Ventas por Mayor</span>
+                    <h3 id="kpiMayor" class="text-2xl font-black text-amber-900 mt-1">0.00</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h2 class="text-lg font-bold text-gray-800 mb-4">Auditoría Avanzada de Ventas y Comisiones</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase border-b border-gray-200">
+                                <th class="p-3">Vendedor</th>
+                                <th class="p-3">Producto / Sucursal</th>
+                                <th class="p-3">Tipo de Venta</th>
+                                <th class="p-3">Cant.</th>
+                                <th class="p-3">Total Cobrado</th>
+                                <th class="p-3">Comisión Devengada</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaReportes" class="text-sm divide-y divide-gray-100">
+                            <tr id="filaVacia">
+                                <td colspan="6" class="p-4 text-center text-gray-400 italic">No hay transacciones registradas en este ciclo operacional.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Simulamos nuestra base de datos Maestra en memoria (Arreglos de Objetos)
+        let inventarioProductos = [
+            { modelo: "iPhone 15 Pro", sucursal: "Central", costoUsd: 800, stock: 15 },
+            { modelo: "Samsung Galaxy S24", sucursal: "Norte", costoUsd: 700, stock: 8 },
+            { modelo: "Xiaomi Redmi Note 13", sucursal: "Mall", costoUsd: 200, stock: 25 }
+        ];
+
+        let baseDeDatosVentas = [];
+        const PIN_SECRETO = "1234"; // Pin de seguridad único exigido por el dueño
+
+        // CONTROL DE NAVEGACIÓN Y ACCESO BLINDADO
+        function cambiarPestana(pestanaObjetivo) {
+            // Protección de seguridad para Dueño y también para Reportes
+            if (pestanaObjetivo === 'dueno' || pestanaObjetivo === 'reportes') {
+                const pin = prompt(`🔑 ACCESO PRIVADO: Ingrese el PIN de seguridad de Administración:`);
+                if (pin !== PIN_SECRETO) {
+                    alert("⚠️ Código erróneo. Acceso bloqueado por políticas de auditoría.");
+                    return;
+                }
+            }
+
+            // Ocultar todas las secciones de la interfaz
+            document.getElementById('seccion-vendedor').classList.add('hidden');
+            document.getElementById('seccion-dueno').classList.add('hidden');
+            document.getElementById('seccion-reportes').classList.add('hidden');
+
+            // Resetear estilos estéticos de los botones de navegación
+            const botones = ['btn-vendedor', 'btn-dueno', 'btn-reportes'];
+            botones.forEach(id => {
+                document.getElementById(id).className = "px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700";
+            });
+
+            // Activar visualmente la pestaña seleccionada
+            if (pestanaObjetivo === 'vendedor') {
+                document.getElementById('seccion-vendedor').classList.remove('hidden');
+                document.getElementById('btn-vendedor').className = "px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow";
+            } else if (pestanaObjetivo === 'dueno') {
+                document.getElementById('seccion-dueno').classList.remove('hidden');
+                document.getElementById('btn-dueno').className = "px-4 py-2 rounded text-sm font-bold bg-red-600 text-white shadow";
+                renderizarInventarioDueno();
+            } else if (pestanaObjetivo === 'reportes') {
+                document.getElementById('seccion-reportes').classList.remove('hidden');
+                document.getElementById('btn-reportes').className = "px-4 py-2 rounded text-sm font-bold bg-amber-600 text-white shadow";
+                actualizarTablaYKPIs();
+            }
+        }
+
+        // RELLENA LOS SELECTORES DINÁMICAMENTE CON LA DATA ACTUALIZADA DEL DUEÑO
+        function actualizarSelectorProductosVendedor() {
+            const select = document.getElementById('ventaModelo');
+            select.innerHTML = ''; // Limpiamos opciones antiguas
+
+            inventarioProductos.forEach((prod, indice) => {
+                const opcion = document.createElement('option');
+                opcion.value = prod.modelo;
+                // Adjuntamos metadatos ocultos para recuperarlos fácilmente en el cálculo matemático
+                opcion.setAttribute('data-costo', prod.costoUsd);
+                opcion.setAttribute('data-sucursal', prod.sucursal);
+                opcion.setAttribute('data-indice', indice);
+                opcion.textContent = `${prod.modelo} (Stock: ${prod.stock} - Suc. ${prod.sucursal})`;
+                select.appendChild(opcion);
+            });
+        }
+
+        // Fuerza a la aplicación a aplicar el precio sugerido automático al cambiar de producto o tipo de venta
+        function forzarAutofillYRecalcular() {
+            const inputPrecio = document.getElementById('ventaPrecioCobrado');
+            inputPrecio.dataset.manual = "false"; // Rompemos el bloqueo manual para sobreescribir con la nueva sugerencia
+            actualizarPreciosVenta(false);
+        }
+
+        // CÁLCULO DE PRECIOS Y COMISIONES (LÓGICA MEDULAR)
+        function actualizarPreciosVenta(esModificacionManual = false) {
+            const select = document.getElementById('ventaModelo');
+            if (!select.options[select.selectedIndex]) return;
+
+            // Recuperamos el costo real en USD asignado por el dueño
+            const costoUsd = parseFloat(select.options[select.selectedIndex].getAttribute('data-costo'));
+            const tipoVenta = document.getElementById('ventaTipo').value;
+            const cantidad = parseInt(document.getElementById('ventaCantidad').value) || 0;
+            const tipoCambio = parseFloat(document.getElementById('ventaTipoCambio').value) || 0;
+            const inputPrecioCobrado = document.getElementById('ventaPrecioCobrado');
+
+            // Si el vendedor modificó el input directamente en pantalla, respetamos su valor
+            if (esModificacionManual) {
+                inputPrecioCobrado.dataset.manual = "true";
+            }
+
+            // Si NO es manual, calculamos el precio sugerido corporativo (Margen Harvard)
+            if (inputPrecioCobrado.dataset.manual !== "true") {
+                const costoLocalUnitario = costoUsd * tipoCambio;
+                const margenSugerido = tipoVenta === 'Unidad' ? 1.20 : 1.08; // 20% ganancia unidad, 8% ganancia mayor
+                inputPrecioCobrado.value = Math.round(costoLocalUnitario * margenSugerido);
+            }
+
+            const precioCobradoUnitario = parseFloat(inputPrecioCobrado.value) || 0;
+            const totalCobrado = precioCobradoUnitario * cantidad;
+
+            // COMISIÓN SOBRE LA UTILIDAD REAL (Precio final cobrado - Costo real de Chile)
+            const costoTotalLocal = (costoUsd * tipoCambio) * cantidad;
+            const utilidadRealEmpresa = totalCobrado - costoTotalLocal;
+
+            let comisionTotal = 0;
+            if (utilidadRealEmpresa > 0) {
+                // Si vende por unidad gana 10% de la ganancia líquida. Por mayor gana el 3%.
+                const porcentajeComision = tipoVenta === 'Unidad' ? 0.10 : 0.03;
+                comisionTotal = utilidadRealEmpresa * porcentajeComision;
+            }
+
+            // Renderizamos los KPIs operacionales del vendedor
+            document.getElementById('txtTotalCobrar').textContent = totalCobrado.toFixed(2);
+            document.getElementById('txtComisionVendedor').textContent = comisionTotal.toFixed(2);
+        }
+
+        // PROCESA LA TRANSACCIÓN COMERCIAL Y DECREMENTA EL STOCK DE LA SUCURSAL
+        function registrarVenta(event) {
+            event.preventDefault();
+
+            const vendedor = document.getElementById('ventaVendedor').value;
+            const select = document.getElementById('ventaModelo');
+            const modelo = select.value;
+            const sucursal = select.options[select.selectedIndex].getAttribute('data-sucursal');
+            const indiceInventario = parseInt(select.options[select.selectedIndex].getAttribute('data-indice'));
+            const tipo = document.getElementById('ventaTipo').value;
+            const cantidad = parseInt(document.getElementById('ventaCantidad').value);
+            const totalCobrado = parseFloat(document.getElementById('txtTotalCobrar').textContent);
+            const comision = parseFloat(document.getElementById('txtComisionVendedor').textContent);
+
+            // CONTROL DE INVENTARIO: Validamos si queda stock disponible antes de vender
+            if (inventarioProductos[indiceInventario].stock < cantidad) {
+                alert(`❌ OPERACIÓN RECHAZADA: No cuentas con stock suficiente de este modelo en la Sucursal ${sucursal}.`);
+                return;
+            }
+
+            // Descontamos las unidades vendidas de la base de datos de mercadería
+            inventarioProductos[indiceInventario].stock -= cantidad;
+
+            // Insertamos la operación en los reportes
+            baseDeDatosVentas.push({ vendedor, modelo, sucursal, tipo, cantidad, totalCobrado, comision });
+
+            alert("💰 Transacción completada con éxito corporativo. Se debitó el stock.");
+
+            // Limpiamos formularios y re-sincronizamos pantallas
+            document.getElementById('ventaVendedor').value = '';
+            document.getElementById('ventaPrecioCobrado').dataset.manual = "false";
+            actualizarSelectorProductosVendedor();
+            actualizarPreciosVenta(false);
+        }
+
+        // CONSOLE DE DUEÑO: AGREGAR O ACTUALIZAR MERCADERÍA
+        function agregarOEditarMercaderia(event) {
+            event.preventDefault();
+
+            const modelo = document.getElementById('invModelo').value.trim();
+            const sucursal = document.getElementById('invSucursal').value;
+            const costoUsd = parseFloat(document.getElementById('invCosto').value);
+            const stock = parseInt(document.getElementById('invStock').value);
+
+            // Verificamos si el modelo ya existe en esa sucursal exacta para EDITARLO
+            const indiceExistente = inventarioProductos.findIndex(p => p.modelo.toLowerCase() === modelo.toLowerCase() && p.sucursal === sucursal);
+
+            if (indiceExistente !== -1) {
+                // CASO EDITAR: Actualizamos los parámetros existentes
+                inventarioProductos[indiceExistente].costoUsd = costoUsd;
+                inventarioProductos[indiceExistente].stock = stock;
+                alert(`🔄 Mercadería Actualizada: Se modificó la ficha técnica de ${modelo} en Sucursal ${sucursal}.`);
+            } else {
+                // CASO NUEVO: Insertamos el registro de importación
+                inventarioProductos.push({ modelo, sucursal, costoUsd, stock });
+                alert(`✨ Nuevo Lote de Chile Registrado: Se añadió ${modelo} al inventario.`);
+            }
+
+            // Reseteamos campos de la consola y refrescamos pantallas de todo el ERP
+            document.getElementById('invModelo').value = '';
+            document.getElementById('invCosto').value = '';
+            document.getElementById('invStock').value = '';
+            
+            renderizarInventarioDueno();
+            actualizarSelectorProductosVendedor();
+        }
+
+        // CARGA LA LISTA EDITABLE EN EL PANEL DEL DUEÑO
+        function renderizarInventarioDueno() {
+            const tbody = document.getElementById('tablaInventarioDueno');
+            tbody.innerHTML = '';
+
+            inventarioProductos.forEach((prod, index) => {
+                const fila = document.createElement('tr');
+                fila.className = "hover:bg-slate-50 border-b border-gray-100";
+                fila.innerHTML = `
+                    <td class="p-3 font-semibold text-slate-800">${prod.modelo}</td>
+                    <td class="p-3"><span class="bg-slate-100 px-2.5 py-1 rounded text-xs font-mono font-bold">${prod.sucursal}</span></td>
+                    <td class="p-3 font-mono font-bold text-red-600">$${prod.costoUsd.toFixed(2)} USD</td>
+                    <td class="p-3 font-mono font-bold text-slate-900">${prod.stock} Unid.</td>
+                    <td class="p-3 text-center">
+                        <button onclick="cargarFichaParaEditar(${index})" class="bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs font-bold hover:bg-blue-100 cursor-pointer">
+                            ✏️ Cargar Datos
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(fila);
+            });
+        }
+
+        // CARGA LOS DATOS DE LA TABLA AL FORMULARIO SUPERIOR PARA HACER LA EDICIÓN RÁPIDA
+        function cargarFichaParaEditar(index) {
+            const prod = inventarioProductos[index];
+            document.getElementById('invModelo').value = prod.modelo;
+            document.getElementById('invSucursal').value = prod.sucursal;
+            document.getElementById('invCosto').value = prod.costoUsd;
+            document.getElementById('invStock').value = prod.stock;
+            
+            alert(`📝 Datos de "${prod.modelo}" cargados en el formulario de arriba. Modifica los campos que desees y presiona "Guardar / Actualizar".`);
+        }
+
+        // RENDERIZA REPORTES FINANCIEROS Y AUDITORÍA DE VENTAS
+        function actualizarTablaYKPIs() {
+            const tabla = document.getElementById('tablaReportes');
+            const filaVacia = document.getElementById('filaVacia');
+            tabla.innerHTML = '';
+
+            if (baseDeDatosVentas.length === 0) {
+                tabla.appendChild(filaVacia);
+                document.getElementById('kpiUnidad').textContent = "0.00";
+                document.getElementById('kpiMayor').textContent = "0.00";
+                return;
+            }
+
+            let acumuladoUnidad = 0;
+            let acumuladoMayor = 0;
+
+            baseDeDatosVentas.forEach(venta => {
+                if (venta.tipo === 'Unidad') acumuladoUnidad += venta.totalCobrado;
+                if (venta.tipo === 'Mayor') acumuladoMayor += venta.totalCobrado;
+
+                const fila = document.createElement('tr');
+                fila.className = "hover:bg-slate-50";
+                fila.innerHTML = `
+                    <td class="p-3 font-medium">${venta.vendedor}</td>
+                    <td class="p-3 text-xs text-gray-700 font-medium">${venta.modelo} <span class="text-gray-400">(${venta.sucursal})</span></td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-black ${venta.tipo === 'Unidad' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">${venta.tipo}</span></td>
+                    <td class="p-3 font-mono font-bold">${venta.cantidad}</td>
+                    <td class="p-3 font-bold text-slate-900">${venta.totalCobrado.toFixed(2)}</td>
+                    <td class="p-3 text-emerald-600 font-black">${venta.comision.toFixed(2)}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+
+            document.getElementById('kpiUnidad').textContent = acumuladoUnidad.toFixed(2);
+            document.getElementById('kpiMayor').textContent = acumuladoMayor.toFixed(2);
+        }
+
+        // INICIALIZADORES AL CARGAR LA APLICACIÓN WEB
+        actualizarSelectorProductosVendedor();
+        actualizarPreciosVenta(false);
+    </script>
+</body>
+</html>
