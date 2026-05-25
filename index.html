@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Integral - Tienda de Celulares</title>
+    <title>ERP Integral V6 - Harvard Tech Mobiles</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
@@ -12,7 +12,7 @@
         <div class="container mx-auto flex justify-between items-center flex-wrap gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-blue-400">HARVARD TECH MOBILES</h1>
-                <p class="text-xs text-gray-400 font-mono">Enterprise Resource Planning (ERP) v5.5 - Conexión Google Sheets</p>
+                <p class="text-xs text-gray-400 font-mono">ERP v6.0 - Automatización de Ventas y Consignaciones en la Nube</p>
             </div>
             <nav class="flex space-x-2 flex-wrap gap-y-2">
                 <button onclick="cambiarPestana('vendedor')" id="btn-vendedor" class="px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow">
@@ -38,7 +38,6 @@
                 <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
                     <span class="mr-2">🛍️</span> Registrar Nueva Venta Directa
                 </h2>
-                
                 <form onsubmit="registrarVenta(event)" class="space-y-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
@@ -66,7 +65,7 @@
                             <input type="number" id="ventaTipoCambio" value="6.96" step="0.01" required class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(false)">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Precio Cobrado por Unidad (Editable)</label>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Precio Cobrado por Unidad</label>
                             <input type="number" id="ventaPrecioCobrado" required class="w-full p-2.5 border border-blue-400 bg-blue-50/50 rounded font-bold focus:ring-2 focus:ring-blue-500" oninput="actualizarPreciosVenta(true)">
                         </div>
                     </div>
@@ -96,13 +95,12 @@
         <section id="seccion-consignacion" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-indigo-200">
                 <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">
-                    <span class="mr-2">🤝</span> Control de Préstamos y Consignaciones (Afecta Stock)
+                    <span class="mr-2">🤝</span> Despachar Equipos en Consignación / Préstamo
                 </h2>
-                
                 <form onsubmit="registrarConsignacion(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Responsable / Quién Recibe</label>
-                        <input type="text" id="consCliente" required placeholder="Ej: Distribuidora Oriente" class="w-full p-2 border border-gray-300 rounded text-sm">
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Persona / Empresa Responsable</label>
+                        <input type="text" id="consCliente" required placeholder="Ej: Promotor Juan" class="w-full p-2 border border-gray-300 rounded text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Seleccionar Celular del Stock</label>
@@ -115,24 +113,24 @@
                     </div>
                     <div>
                         <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded text-sm font-bold hover:bg-indigo-700 transition cursor-pointer">
-                            📦 Despachar Consignación
+                            📦 Despachar e Inyectar a la Nube
                         </button>
                     </div>
                 </form>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-md font-bold text-gray-800 mb-3">Historial de Equipos en Tránsito (Pendientes y Pagados)</h3>
+                <h3 class="text-md font-bold text-gray-800 mb-3">Historial de Equipos en Tránsito (Sincronizado)</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-slate-800 text-white text-xs uppercase">
-                                <th class="p-3 rounded-l">Fecha/Hora</th>
+                                <th class="p-3">Fecha/Hora</th>
                                 <th class="p-3">Responsable</th>
-                                <th class="p-3">Equipo / Sucursal de Origen</th>
+                                <th class="p-3">Equipo (Origen)</th>
                                 <th class="p-3">Cantidad</th>
                                 <th class="p-3">Estado Financiero</th>
-                                <th class="p-3 rounded-r text-center">Acciones de Respaldo</th>
+                                <th class="p-3 text-center">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tablaConsignaciones" class="text-sm divide-y divide-gray-200">
@@ -161,38 +159,34 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Costo en Chile (USD $)</label>
-                        <input type="number" id="invCosto" required step="0.01" placeholder="800" class="w-full p-2 border border-gray-300 rounded text-sm">
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Costo Base (USD $)</label>
+                        <input type="number" id="invCosto" required step="0.01" class="w-full p-2 border border-gray-300 rounded text-sm">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cantidad / Stock</label>
-                        <input type="number" id="invStock" required min="0" placeholder="10" class="w-full p-2 border border-gray-300 rounded text-sm">
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Stock</label>
+                        <input type="number" id="invStock" required min="0" class="w-full p-2 border border-gray-300 rounded text-sm">
                     </div>
                     <div>
                         <button type="submit" class="w-full bg-red-700 text-white p-2 rounded text-sm font-bold hover:bg-red-800 transition cursor-pointer">
-                            💾 Guardar / Actualizar
+                            💾 Guardar Item
                         </button>
                     </div>
                 </form>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-md font-bold text-gray-800 mb-3">Stock Activo y Márgenes de Importación</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-800 text-white text-xs uppercase">
-                                <th class="p-3 rounded-l">Modelo</th>
-                                <th class="p-3">Sucursal</th>
-                                <th class="p-3">Costo Base (Chile)</th>
-                                <th class="p-3">Stock Disponible</th>
-                                <th class="p-3 rounded-r text-center">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaInventarioDueno" class="text-sm divide-y divide-gray-200">
-                            </tbody>
-                    </table>
-                </div>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800 text-white text-xs uppercase">
+                            <th class="p-3">Modelo</th>
+                            <th class="p-3">Sucursal</th>
+                            <th class="p-3">Costo Base</th>
+                            <th class="p-3">Stock Disponible</th>
+                            <th class="p-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaInventarioDueno" class="text-sm divide-y divide-gray-200"></tbody>
+                </table>
             </div>
         </section>
 
@@ -203,41 +197,38 @@
                     <h3 id="kpiVentasTotales" class="text-2xl font-black text-slate-900 mt-1">0.00</h3>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500">
-                    <span class="text-xs font-bold text-emerald-600 uppercase">Ganancia Neta Real Tienda</span>
+                    <span class="text-xs font-bold text-emerald-600 uppercase">Ganancia Neta Tienda</span>
                     <h3 id="kpiGananciaTotal" class="text-2xl font-black text-emerald-900 mt-1">0.00</h3>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
-                    <span class="text-xs font-bold text-amber-500 uppercase">Comisiones Totales Pagadas</span>
+                    <span class="text-xs font-bold text-amber-500 uppercase">Comisiones Generadas</span>
                     <h3 id="kpiComisionesTotales" class="text-2xl font-black text-amber-900 mt-1">0.00</h3>
                 </div>
             </div>
-
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h2 class="text-lg font-bold text-gray-800 mb-4">Auditoría de Ventas y Rendimiento de Utilidades</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase border-b border-gray-200">
-                                <th class="p-3">Vendedor</th>
-                                <th class="p-3">Producto / Sucursal</th>
-                                <th class="p-3">Tipo</th>
-                                <th class="p-3">Cant.</th>
-                                <th class="p-3">Venta Total</th>
-                                <th class="p-3 text-blue-600">Ganancia Equipo</th>
-                                <th class="p-3 text-emerald-600">Comisión</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tablaReportes" class="text-sm divide-y divide-gray-100">
-                            </tbody>
-                    </table>
-                </div>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase">
+                            <th class="p-3">Vendedor</th>
+                            <th class="p-3">Producto</th>
+                            <th class="p-3">Tipo</th>
+                            <th class="p-3">Cant.</th>
+                            <th class="p-3">Venta Total</th>
+                            <th class="p-3 text-blue-600">Utilidad</th>
+                            <th class="p-3 text-emerald-600">Comisión</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaReportes" class="text-sm divide-y divide-gray-100"></tbody>
+                </table>
             </div>
         </section>
-
     </main>
 
     <script>
-        // BASE DE DATOS MAESTRA INTEGRADA
+        // ENLACE MAESTRO CON GOOGLE SHEETS
+        // ⚠️ EN LA SIGUIENTE LÍNEA PEGA TU URL DE GOOGLE APPS SCRIPT:
+        const URL_API_GLOBAL = "https://script.google.com/macros/s/AKfycbyocfNKb6rR5EQrSEpWkOIUys0csumqGbu1N195cztZEN1dog1mDduJW0lzxxv8wBaD3Q/exec";
+
         let inventarioProductos = [
             { modelo: "iPhone 15 Pro", sucursal: "Central", costoUsd: 800, stock: 15 },
             { modelo: "Samsung Galaxy S24", sucursal: "Norte", costoUsd: 700, stock: 8 },
@@ -248,364 +239,190 @@
         let baseDeDatosConsignaciones = []; 
         const PIN_SECRETO = "1234";
 
-        // SISTERMA DE SEGURIDAD Y PESTAÑAS
-        function cambiarPestana(pestanaObjetivo) {
-            if (pestanaObjetivo === 'dueno' || pestanaObjetivo === 'reportes') {
-                const pin = prompt(`🔑 ACCESO PRIVADO: Ingrese el PIN de Administración:`);
-                if (pin !== PIN_SECRETO) {
-                    alert("⚠️ Código erróneo. Acceso denegado.");
-                    return;
-                }
+        function cambiarPestana(pestana) {
+            if (pestana === 'dueno' || pestana === 'reportes') {
+                if (prompt("🔑 PIN de Seguridad:") !== PIN_SECRETO) { alert("Acceso Denegado"); return; }
             }
-
             document.getElementById('seccion-vendedor').classList.add('hidden');
             document.getElementById('seccion-consignacion').classList.add('hidden');
             document.getElementById('seccion-dueno').classList.add('hidden');
             document.getElementById('seccion-reportes').classList.add('hidden');
 
-            const botones = ['btn-vendedor', 'btn-consignacion', 'btn-dueno', 'btn-reportes'];
-            botones.forEach(id => {
-                document.getElementById(id).className = "px-4 py-2 rounded text-sm font-bold bg-slate-800 text-gray-300 hover:bg-slate-700";
-            });
-
-            if (pestanaObjetivo === 'vendedor') {
-                document.getElementById('seccion-vendedor').classList.remove('hidden');
-                document.getElementById('btn-vendedor').className = "px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow";
-            } else if (pestanaObjetivo === 'consignacion') {
-                document.getElementById('seccion-consignacion').classList.remove('hidden');
-                document.getElementById('btn-consignacion').className = "px-4 py-2 rounded text-sm font-bold bg-indigo-600 text-white shadow";
-                renderizerConsignaciones();
-            } else if (pestanaObjetivo === 'dueno') {
-                document.getElementById('seccion-dueno').classList.remove('hidden');
-                document.getElementById('btn-dueno').className = "px-4 py-2 rounded text-sm font-bold bg-red-600 text-white shadow";
-                renderizarInventarioDueno();
-            } else if (pestanaObjetivo === 'reportes') {
-                document.getElementById('seccion-reportes').classList.remove('hidden');
-                document.getElementById('btn-reportes').className = "px-4 py-2 rounded text-sm font-bold bg-amber-600 text-white shadow";
-                actualizarTablaYKPIs();
-            }
+            if (pestana === 'vendedor') document.getElementById('seccion-vendedor').classList.remove('hidden');
+            if (pestana === 'consignacion') { document.getElementById('seccion-consignacion').classList.remove('hidden'); renderizerConsignaciones(); }
+            if (pestana === 'dueno') { document.getElementById('seccion-dueno').classList.remove('hidden'); renderizarInventarioDueno(); }
+            if (pestana === 'reportes') { document.getElementById('seccion-reportes').classList.remove('hidden'); actualizarTablaYKPIs(); }
         }
 
-        // RELLENO INTEGRADO DE SELECTORES COMERCIALES
         function actualizarSelectoresDeProductos() {
-            const selectVenta = document.getElementById('ventaModelo');
-            const selectCons = document.getElementById('consModelo');
-            
-            if (!selectVenta || !selectCons) return;
-            
-            selectVenta.innerHTML = ''; 
-            selectCons.innerHTML = '';
-
-            inventarioProductos.forEach((prod, indice) => {
-                const txtContenido = `${prod.modelo} (Stock: ${prod.stock} - Suc. ${prod.sucursal})`;
-                
-                const optVenta = document.createElement('option');
-                optVenta.value = prod.modelo;
-                optVenta.setAttribute('data-costo', prod.costoUsd);
-                optVenta.setAttribute('data-sucursal', prod.sucursal);
-                optVenta.setAttribute('data-indice', indice);
-                optVenta.textContent = txtContenido;
-                selectVenta.appendChild(optVenta);
-
-                const optCons = document.createElement('option');
-                optCons.value = prod.modelo;
-                optCons.setAttribute('data-indice', indice);
-                optCons.textContent = txtContenido;
-                selectCons.appendChild(optCons);
+            const vM = document.getElementById('ventaModelo'); const cM = document.getElementById('consModelo');
+            if (!vM || !cM) return; vM.innerHTML = ''; cM.innerHTML = '';
+            inventarioProductos.forEach((p, i) => {
+                let txt = `${p.modelo} (Stock: ${p.stock} - ${p.sucursal})`;
+                let o1 = document.createElement('option'); o1.value = p.modelo; o1.textContent = txt;
+                o1.setAttribute('data-costo', p.costoUsd); o1.setAttribute('data-sucursal', p.sucursal); o1.setAttribute('data-indice', i);
+                vM.appendChild(o1);
+                let o2 = document.createElement('option'); o2.value = p.modelo; o2.textContent = txt; o2.setAttribute('data-indice', i);
+                cM.appendChild(o2);
             });
         }
 
-        function forzarAutofillYRecalcular() {
-            document.getElementById('ventaPrecioCobrado').dataset.manual = "false"; 
-            actualizarPreciosVenta(false);
-        }
+        function forzarAutofillYRecalcular() { document.getElementById('ventaPrecioCobrado').dataset.manual = "false"; actualizarPreciosVenta(false); }
 
-        // CONTROL DE MÁRGENES Y COMISIONES 
-        function actualizarPreciosVenta(esModificacionManual = false) {
-            const select = document.getElementById('ventaModelo');
-            if (!select || !select.options[select.selectedIndex]) return;
-
-            const costoUsd = parseFloat(select.options[select.selectedIndex].getAttribute('data-costo'));
-            const tipoVenta = document.getElementById('ventaTipo').value;
-            const cantidad = parseInt(document.getElementById('ventaCantidad').value) || 0;
-            const tipoCambio = parseFloat(document.getElementById('ventaTipoCambio').value) || 0;
-            const inputPrecioCobrado = document.getElementById('ventaPrecioCobrado');
-
-            if (esModificacionManual) inputPrecioCobrado.dataset.manual = "true";
-
-            if (inputPrecioCobrado.dataset.manual !== "true") {
-                const costoLocalUnitario = costoUsd * tipoCambio;
-                const margenSugerido = tipoVenta === 'Unidad' ? 1.20 : 1.08; 
-                inputPrecioCobrado.value = Math.round(costoLocalUnitario * margenSugerido);
-            }
-
-            const precioCobradoUnitario = parseFloat(inputPrecioCobrado.value) || 0;
-            const totalCobrado = precioCobradoUnitario * cantidad;
-            const costoTotalEnMonedaLocal = (costoUsd * tipoCambio) * cantidad;
-            const gananciaPuraTotal = totalCobrado - costoTotalEnMonedaLocal;
-
-            let comisionTotal = 0;
-            if (gananciaPuraTotal > 0) {
-                const porcentajeComision = tipoVenta === 'Unidad' ? 0.10 : 0.03;
-                comisionTotal = gananciaPuraTotal * porcentajeComision;
-            }
-
-            document.getElementById('txtTotalCobrar').textContent = totalCobrado.toFixed(2);
-            document.getElementById('txtGananciaPura').textContent = gananciaPuraTotal.toFixed(2);
-            document.getElementById('txtComisionVendedor').textContent = comisionTotal.toFixed(2);
-        }
-
-        // ENVÍO DE DATOS HACIA LA API DE GOOGLE SHEETS
-        function registrarVenta(event) {
-            event.preventDefault();
-
-            // ⚠️ PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT:
-            const URL_MI_GOOGLE_API = "https://script.google.com/macros/s/AKfycbyFD4AH_wMW1MMZcyUzXsSXISX_tgv_lvb2q7xCdntXazlENhUQ7BaIM3cZSwl1YTEJBg/exec";
-
-            const vendedor = document.getElementById('ventaVendedor').value;
-            const select = document.getElementById('ventaModelo');
-            const modelo = select.value;
-            const sucursal = select.options[select.selectedIndex].getAttribute('data-sucursal');
-            const indiceInventario = parseInt(select.options[select.selectedIndex].getAttribute('data-indice'));
+        function actualizarPreciosVenta(manual = false) {
+            const sel = document.getElementById('ventaModelo'); if (!sel || !sel.options[sel.selectedIndex]) return;
+            const costo = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-costo'));
             const tipo = document.getElementById('ventaTipo').value;
-            const cantidad = parseInt(document.getElementById('ventaCantidad').value);
+            const cant = parseInt(document.getElementById('ventaCantidad').value) || 0;
+            const tc = parseFloat(document.getElementById('ventaTipoCambio').value) || 0;
+            const inp = document.getElementById('ventaPrecioCobrado');
+            if (manual) inp.dataset.manual = "true";
+            if (inp.dataset.manual !== "true") inp.value = Math.round((costo * tc) * (tipo === 'Unidad' ? 1.20 : 1.08));
             
-            const totalCobrado = parseFloat(document.getElementById('txtTotalCobrar').textContent);
-            const gananciaRegistrada = parseFloat(document.getElementById('txtGananciaPura').textContent);
-            const comision = parseFloat(document.getElementById('txtComisionVendedor').textContent);
+            let total = parseFloat(inp.value) * cant; let ganancia = total - ((costo * tc) * cant);
+            let com = ganancia > 0 ? ganancia * (tipo === 'Unidad' ? 0.10 : 0.03) : 0;
+            document.getElementById('txtTotalCobrar').textContent = total.toFixed(2);
+            document.getElementById('txtGananciaPura').textContent = ganancia.toFixed(2);
+            document.getElementById('txtComisionVendedor').textContent = com.toFixed(2);
+        }
 
-            if (inventarioProductos[indiceInventario].stock < cantidad) {
-                alert(`❌ ERROR DE INVENTARIO: Stock insuficiente en la Sucursal ${sucursal}.`);
-                return;
-            }
+        // DISPARADOR 1: ENVIAR VENTA DIRECTA A LA NUBE
+        function registrarVenta(e) {
+            e.preventDefault();
+            const sel = document.getElementById('ventaModelo'); const idx = parseInt(sel.options[sel.selectedIndex].getAttribute('data-indice'));
+            const cant = parseInt(document.getElementById('ventaCantidad').value);
+            if (inventarioProductos[idx].stock < cant) { alert("Stock Insuficiente"); return; }
 
-            inventarioProductos[indiceInventario].stock -= cantidad;
-            baseDeDatosVentas.push({ vendedor, modelo, sucursal, tipo, cantidad, totalCobrado, gananciaRegistrada, comision });
+            inventarioProductos[idx].stock -= cant;
+            let total = parseFloat(document.getElementById('txtTotalCobrar').textContent);
+            let gan = parseFloat(document.getElementById('txtGananciaPura').textContent);
 
-            // Objeto formateado para la base de datos externa
-            const datosParaNube = {
-                vendedor: vendedor,
-                modelo: modelo,
-                sucursal: sucursal,
-                tipo: tipo,
-                cantidad: cantidad,
-                totalCobrado: totalCobrado,
-                gananciaRegistrada: gananciaRegistrada
+            const payload = {
+                tipoOperacion: "VENTA",
+                vendedor: document.getElementById('ventaVendedor').value,
+                modelo: sel.value,
+                sucursal: sel.options[sel.selectedIndex].getAttribute('data-sucursal'),
+                tipo: document.getElementById('ventaTipo').value,
+                cantidad: cant,
+                totalCobrado: total,
+                gananciaRegistrada: gan
             };
 
-            // Ejecución del disparo de red
-            if(URL_MI_GOOGLE_API !== "PEGA_AQUI_TU_URL_DE_GOOGLE_APPS_SCRIPT") {
-                fetch(URL_MI_GOOGLE_API, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datosParaNube)
-                })
-                .then(() => console.log("Sincronizado con Google Sheets."))
-                .catch(err => console.error("Error de red:", err));
-            }
+            enviarANube(payload);
+            alert("💸 Venta registrada y enviada a Google Sheets.");
+            document.getElementById('ventaVendedor').value = ''; forzarAutofillYRecalcular(); actualizarSelectoresDeProductos();
+        }
 
-            alert(`💰 ¡Venta procesada con éxito!\nLa utilidad neta de ${gananciaRegistrada.toFixed(2)} ha sido respaldada.`);
+        // DISPARADOR 2: ENVIAR CONSIGNACIÓN/PRÉSTAMO A LA NUBE
+        function registrarConsignacion(e) {
+            e.preventDefault();
+            const sel = document.getElementById('consModelo'); const idx = parseInt(sel.options[sel.selectedIndex].getAttribute('data-indice'));
+            const cant = parseInt(document.getElementById('consCantidad').value);
+            const prod = inventarioProductos[idx];
+            if (prod.stock < cant) { alert("Stock insuficiente para préstamo"); return; }
+
+            prod.stock -= cant;
+            let fecha = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             
-            document.getElementById('ventaVendedor').value = '';
-            document.getElementById('ventaPrecioCobrado').dataset.manual = "false";
-            actualizarSelectoresDeProductos();
-            actualizarPreciosVenta(false);
+            const nuevaCons = {
+                id: Date.now(), fecha: fecha, cliente: document.getElementById('consCliente').value.trim(),
+                modelo: prod.modelo, sucursal: prod.sucursal, idxOrig: idx, cantidad: cant, estado: "Pendiente"
+            };
+            baseDeDatosConsignaciones.push(nuevaCons);
+
+            const payload = {
+                tipoOperacion: "CONSIGNACION", fecha: fecha, cliente: nuevaCons.cliente,
+                modelo: nuevaCons.modelo, cantidad: cant, sucursal: prod.sucursal, estado: "Pendiente"
+            };
+
+            enviarANube(payload);
+            alert("🤝 Equipo en tránsito respaldado en Google Sheets.");
+            document.getElementById('consCliente').value = ''; actualizarSelectoresDeProductos(); renderizerConsignaciones();
         }
 
-        // REGISTRO DE CONSIGNACIONES
-        function registrarConsignacion(event) {
-            event.preventDefault();
-
-            const cliente = document.getElementById('consCliente').value.trim();
-            const select = document.getElementById('consModelo');
-            const indiceInventario = parseInt(select.options[select.selectedIndex].getAttribute('data-indice'));
-            const cantidad = parseInt(document.getElementById('consCantidad').value);
-
-            const producto = inventarioProductos[indiceInventario];
-
-            if (producto.stock < cantidad) {
-                alert(`❌ OPERACIÓN RECHAZADA: Stock insuficiente en Sucursal ${producto.sucursal}.`);
-                return;
-            }
-
-            inventarioProductos[indiceInventario].stock -= cantidad;
-
-            const ahora = new Date();
-            const fechaHora = ahora.toLocaleDateString() + ' ' + ahora.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-            baseDeDatosConsignaciones.push({
-                id: Date.now(),
-                fecha: fechaHora,
-                cliente: cliente,
-                modelo: producto.modelo,
-                sucursal: producto.sucursal,
-                indiceOriginal: indiceInventario,
-                cantidad: cantidad,
-                estado: "Pendiente"
-            });
-
-            alert(`🤝 Consignación registrada. Se retiraron ${cantiad = cantidad} unidades del stock.`);
-            document.getElementById('consCliente').value = '';
-            actualizarSelectoresDeProductos();
-            renderizerConsignaciones();
-        }
-
-        function renderizerConsignaciones() {
-            const tbody = document.getElementById('tablaConsignaciones');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-
-            if (baseDeDatosConsignaciones.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay equipos en consignación vigentes.</td></tr>`;
-                return;
-            }
-
-            baseDeDatosConsignaciones.forEach(c => {
-                const fila = document.createElement('tr');
-                fila.className = "hover:bg-slate-50 border-b border-gray-100";
-                const colorEst = c.estado === 'Pagado' ? 'bg-green-100 text-green-800' : 'bg-rose-100 text-rose-800';
-
-                fila.innerHTML = `
-                    <td class="p-3 text-xs text-gray-500">${c.fecha}</td>
-                    <td class="p-3 font-semibold text-slate-800">${c.cliente}</td>
-                    <td class="p-3">${c.modelo} <span class="text-xs text-gray-400">(${c.sucursal})</span></td>
-                    <td class="p-3 font-mono font-bold">${c.text = c.cantidad} Unid.</td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${colorEst}">${c.estado}</span></td>
-                    <td class="p-3 text-center space-x-2">
-                        <button onclick="alternarEstadoConsignacion(${c.id})" class="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded border hover:bg-slate-200 cursor-pointer">
-                            🔄 Cambiar Pago
-                        </button>
-                        <button onclick="devolverEquiposAInventario(${c.id})" class="text-xs bg-rose-50 text-rose-600 px-2 py-1 rounded hover:bg-rose-100 cursor-pointer">
-                            🔙 Devolver a Stock
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(fila);
-            });
-        }
-
+        // DISPARADOR 3: ACTUALIZAR ESTADO DE PAGO EN LA NUBE
         function alternarEstadoConsignacion(id) {
             baseDeDatosConsignaciones = baseDeDatosConsignaciones.map(c => {
-                if (c.id === id) c.estado = c.estado === 'Pendiente' ? 'Pagado' : 'Pendiente';
+                if (c.id === id) {
+                    c.estado = c.estado === 'Pendiente' ? 'Pagado' : 'Pendiente';
+                    const payload = {
+                        tipoOperacion: "CONSIGNACION", fecha: c.fecha, cliente: c.cliente,
+                        modelo: c.modelo, cantidad: c.cantidad, sucursal: c.sucursal, estado: c.estado + " (ACTUALIZADO)"
+                    };
+                    enviarANube(payload);
+                    alert(`Estado cambiado a ${c.estado}. Registro enviado a la nube.`);
+                }
                 return c;
             });
             renderizerConsignaciones();
         }
 
         function devolverEquiposAInventario(id) {
-            const registro = baseDeDatosConsignaciones.find(c => c.id === id);
-            if (confirm(`¿Confirmas que devolvieron las ${registro.cantidad} unidades?`)) {
-                inventarioProductos[registro.indiceOriginal].stock += registro.cantidad;
-                baseDeDatosConsignaciones = baseDeDatosConsignaciones.filter(c => c.id !== id);
-                alert("🔙 Equipos reintegrados exitosamente.");
-                actualizarSelectoresDeProductos();
-                renderizerConsignaciones();
+            const c = baseDeDatosConsignaciones.find(x => x.id === id);
+            if (confirm(`¿Devolvió las ${c.cantidad} unidades?`)) {
+                inventarioProductos[c.idxOrig].stock += c.cantidad;
+                const payload = {
+                    tipoOperacion: "CONSIGNACION", fecha: c.fecha, cliente: c.cliente,
+                    modelo: c.modelo, cantidad: c.cantidad, sucursal: c.sucursal, estado: "Devuelto a Stock"
+                };
+                enviarANube(payload);
+                baseDeDatosConsignaciones = baseDeDatosConsignaciones.filter(x => x.id !== id);
+                actualizarSelectoresDeProductos(); renderizerConsignaciones();
             }
         }
 
-        // CONTROL DEL DUEÑO
-        function agregarOEditarMercaderia(event) {
-            event.preventDefault();
-
-            const modelo = document.getElementById('invModelo').value.trim();
-            const sucursal = document.getElementById('invSucursal').value;
-            const costoUsd = parseFloat(document.getElementById('invCosto').value);
-            const stock = parseInt(document.getElementById('invStock').value);
-
-            const indiceExistente = inventarioProductos.findIndex(p => p.modelo.toLowerCase() === modelo.toLowerCase() && p.sucursal === sucursal);
-
-            if (indiceExistente !== -1) {
-                inventarioProductos[indiceExistente].costoUsd = costoUsd;
-                inventarioProductos[indiceExistente].stock = stock;
-                alert("🔄 Inventario Actualizado.");
-            } else {
-                inventarioProductos.push({ modelo, sucursal, costoUsd, stock });
-                alert("✨ Nueva Importación registrada.");
-            }
-
-            document.getElementById('invModelo').value = '';
-            document.getElementById('invCosto').value = '';
-            document.getElementById('invStock').value = '';
-            
-            renderizarInventoryDueno();
-            actualizarSelectoresDeProductos();
+        function enviarANube(data) {
+            if (URL_API_GLOBAL === "PEGA_AQUI_TU_URL_DE_GOOGLE_APPS_SCRIPT") return;
+            fetch(URL_API_GLOBAL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
+            .catch(e => console.error("Error de sincronización:", e));
         }
 
-        function renderizarInventarioDueno() {
-            const tbody = document.getElementById('tablaInventarioDueno');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-
-            inventarioProductos.forEach((prod, index) => {
-                const fila = document.createElement('tr');
-                fila.className = "hover:bg-slate-50 border-b border-gray-100";
-                fila.innerHTML = `
-                    <td class="p-3 font-semibold text-slate-800">${prod.modelo}</td>
-                    <td class="p-3"><span class="bg-slate-100 px-2.5 py-1 rounded text-xs font-mono font-bold">${prod.sucursal}</span></td>
-                    <td class="p-3 font-mono font-bold text-red-600">$${prod.costoUsd.toFixed(2)} USD</td>
-                    <td class="p-3 font-mono font-bold text-slate-900">${prod.stock} Unid.</td>
-                    <td class="p-3 text-center">
-                        <button onclick="cargarFichaParaEditar(${index})" class="bg-blue-50 text-blue-600 px-3 py-1 rounded text-xs font-bold hover:bg-blue-100 cursor-pointer">
-                            ✏️ Editar
-                        </button>
-                    </td>
-                `;
+        function renderizerConsignaciones() {
+            const tbody = document.getElementById('tablaConsignaciones'); if(!tbody) return; tbody.innerHTML = '';
+            if (baseDeDatosConsignaciones.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay consignaciones vigentes.</td></tr>`; return; }
+            baseDeDatosConsignaciones.forEach(c => {
+                let col = c.estado === 'Pagado' ? 'bg-green-100 text-green-800' : 'bg-rose-100 text-rose-800';
+                let fila = document.createElement('tr'); fila.className = "border-b border-gray-100";
+                fila.innerHTML = `<td class="p-3 text-xs text-gray-500">${c.fecha}</td><td class="p-3 font-semibold">${c.cliente}</td><td>${c.modelo}</td><td class="font-bold">${c.cantidad}</td><td><span class="px-2 py-0.5 rounded text-xs font-bold ${col}">${c.estado}</span></td><td class="p-3 text-center space-x-1"><button onclick="alternarEstadoConsignacion(${c.id})" class="text-xs bg-gray-100 px-2 py-1 rounded border">🔄 Pago</button><button onclick="devolverEquiposAInventario(${c.id})" class="text-xs bg-rose-50 text-rose-600 px-2 py-1 rounded">🔙 Devolver</button></td>`;
                 tbody.appendChild(fila);
             });
         }
 
-        function cargarFichaParaEditar(index) {
-            const prod = inventarioProductos[index];
-            document.getElementById('invModelo').value = prod.modelo;
-            document.getElementById('invSucursal').value = prod.sucursal;
-            document.getElementById('invCosto').value = prod.costoUsd;
-            document.getElementById('invStock').value = prod.stock;
+        function agregarOEditarMercaderia(e) {
+            e.preventDefault();
+            const mod = document.getElementById('invModelo').value.trim(); const suc = document.getElementById('invSucursal').value;
+            const cost = parseFloat(document.getElementById('invCosto').value); const stk = parseInt(document.getElementById('invStock').value);
+            let idx = inventarioProductos.findIndex(p => p.modelo.toLowerCase() === mod.toLowerCase() && p.sucursal === suc);
+            if (idx !== -1) { inventarioProductos[idx].costoUsd = cost; inventarioProductos[idx].stock = stk; } 
+            else { inventarioProductos.push({ modelo: mod, sucursal: suc, costoUsd: cost, stock: stk }); }
+            document.getElementById('invModelo').value = ''; document.getElementById('invCosto').value = ''; document.getElementById('invStock').value = '';
+            renderizarInventarioDueno(); actualizarSelectoresDeProductos();
         }
 
-        // REPORTES
-        function actualizarTablaYKPIs() {
-            const tabla = document.getElementById('tablaReportes');
-            if(!tabla) return;
-            tabla.innerHTML = '';
-
-            if (baseDeDatosVentas.length === 0) {
-                tabla.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400 italic">No hay ventas registradas.</td></tr>`;
-                document.getElementById('kpiVentasTotales').textContent = "0.00";
-                document.getElementById('kpiGananciaTotal').textContent = "0.00";
-                document.getElementById('kpiComisionesTotales').textContent = "0.00";
-                return;
-            }
-
-            let acumuladoVentasBrutas = 0;
-            let acumuladoGananciaPura = 0;
-            let acumuladoComisiones = 0;
-
-            baseDeDatosVentas.forEach(venta => {
-                acumuladoVentasBrutas += venta.totalCobrado;
-                acumuladoGananciaPura += venta.gananciaRegistrada;
-                acumuladoComisiones += venta.comision;
-
-                const fila = document.createElement('tr');
-                fila.className = "hover:bg-slate-50";
-                fila.innerHTML = `
-                    <td class="p-3 font-medium">${venta.vendedor}</td>
-                    <td class="p-3 text-xs text-gray-700">${venta.modelo} <span class="text-gray-400">(${venta.sucursal})</span></td>
-                    <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] font-black ${venta.tipo === 'Unidad' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'}">${venta.tipo}</span></td>
-                    <td class="p-3 font-mono font-bold">${venta.cantidad}</td>
-                    <td class="p-3 font-bold text-slate-500">${venta.totalCobrado.toFixed(2)}</td>
-                    <td class="p-3 font-bold text-blue-600">${venta.gananciaRegistrada.toFixed(2)}</td>
-                    <td class="p-3 text-emerald-600 font-black">${venta.comision.toFixed(2)}</td>
-                `;
-                tabla.appendChild(fila);
+        function renderizarInventarioDueno() {
+            const tbody = document.getElementById('tablaInventarioDueno'); if(!tbody) return; tbody.innerHTML = '';
+            inventarioProductos.forEach((p, i) => {
+                let fila = document.createElement('tr'); fila.className = "border-b border-gray-100";
+                fila.innerHTML = `<td class="p-3 font-semibold">${p.modelo}</td><td><span class="bg-gray-100 px-2 py-1 rounded text-xs font-bold">${p.sucursal}</span></td><td class="text-red-600 font-bold">$${p.costoUsd.toFixed(2)}</td><td class="font-bold">${p.stock} U.</td><td class="text-center"><button onclick="cargarFichaParaEditar(${i})" class="text-xs text-blue-600">✏️ Editar</button></td>`;
+                tbody.appendChild(fila);
             });
-
-            document.getElementById('kpiVentasTotales').textContent = acumuladoVentasBrutas.toFixed(2);
-            document.getElementById('kpiGananciaTotal').textContent = acumuladoGananciaPura.toFixed(2);
-            document.getElementById('kpiComisionesTotales').textContent = acumuladoComisiones.toFixed(2);
         }
 
-        // Ejecución inicial automática al encender la app
+        function cargarFichaParaEditar(i) { let p = inventarioProductos[i]; document.getElementById('invModelo').value = p.modelo; document.getElementById('invSucursal').value = p.sucursal; document.getElementById('invCosto').value = p.costoUsd; document.getElementById('invStock').value = p.stock; }
+
+        function actualizarTablaYKPIs() {
+            const t = document.getElementById('tablaReportes'); if(!t) return; t.innerHTML = '';
+            if (baseDeDatosVentas.length === 0) { document.getElementById('kpiVentasTotales').textContent="0.00"; document.getElementById('kpiGananciaTotal').textContent="0.00"; document.getElementById('kpiComisionesTotales').textContent="0.00"; return; }
+            let b=0, g=0, c=0;
+            baseDeDatosVentas.forEach(v => {
+                b+=v.totalCobrado; g+=v.gananciaRegistrada; c+=v.comision;
+                let f = document.createElement('tr');
+                f.innerHTML = `<td class="p-2">${v.vendedor}</td><td class="text-xs">${v.modelo}</td><td>${v.tipo}</td><td class="font-bold">${v.cantidad}</td><td>${v.totalCobrado.toFixed(2)}</td><td class="text-blue-600 font-bold">${v.gananciaRegistrada.toFixed(2)}</td><td class="text-emerald-600">${v.comision.toFixed(2)}</td>`;
+                t.appendChild(f);
+            });
+            document.getElementById('kpiVentasTotales').textContent = b.toFixed(2); document.getElementById('kpiGananciaTotal').textContent = g.toFixed(2); document.getElementById('kpiComisionesTotales').textContent = c.toFixed(2);
+        }
+
         actualizarSelectoresDeProductos();
         actualizarPreciosVenta(false);
     </script>
