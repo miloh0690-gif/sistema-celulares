@@ -302,7 +302,7 @@
             if (inp.dataset.manual !== "true") inp.value = Math.round((costo * tc) * (tipo === 'Unidad' ? 1.20 : 1.08));
             
             let total = parseFloat(inp.value) * cant; let ganancia = total - ((costo * tc) * cant);
-            let com = ganancia > 0 ? ganancia * (tipo === 'Unidad' ? 0.10 : 0.03) : 0;
+            let com = ganancia > 0 ? ganancia * (tipo === 'Unidad' ? 0.30 : 0.30) : 0;
             document.getElementById('txtTotalCobrar').textContent = total.toFixed(2);
             document.getElementById('txtGananciaPura').textContent = ganancia.toFixed(2);
             document.getElementById('txtComisionVendedor').textContent = com.toFixed(2);
