@@ -3,16 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP Integral V6 - Harvard Tech Mobiles</title>
+    <title>ERP Centralizado v7 - Harvard Tech Mobiles</title>
+    <!-- Tailwind CSS para diseño de interfaz corporativa premium -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 font-sans text-gray-900">
 
+    <!-- ENCABEZADO Y CONTROL DE NAVEGACIÓN -->
     <header class="bg-slate-900 text-white p-4 shadow-lg">
         <div class="container mx-auto flex justify-between items-center flex-wrap gap-4">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight text-blue-400">HARVARD TECH MOBILES</h1>
-                <p class="text-xs text-gray-400 font-mono">ERP v6.0 - Automatización de Ventas y Consignaciones en la Nube</p>
+                <p class="text-xs text-gray-400 font-mono">Única Fuente de Verdad - Sincronización Total con Google Sheets</p>
+            </div>
+            <!-- Estado de conexión en tiempo real con la Base de Datos -->
+            <div id="statusConexion" class="bg-amber-500/20 text-amber-400 px-3 py-1 rounded text-xs font-mono border border-amber-500/30 animate-pulse">
+                🔄 Conectando a Google Sheets...
             </div>
             <nav class="flex space-x-2 flex-wrap gap-y-2">
                 <button onclick="cambiarPestana('vendedor')" id="btn-vendedor" class="px-4 py-2 rounded text-sm font-bold bg-blue-600 text-white shadow">
@@ -33,6 +39,9 @@
 
     <main class="container mx-auto p-6 max-w-5xl">
 
+        <!-- ========================================== -->
+        <!-- PESTAÑA 1: VISTA VENDEDOR                 -->
+        <!-- ========================================== -->
         <section id="seccion-vendedor" class="space-y-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
                 <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
@@ -45,9 +54,10 @@
                             <input type="text" id="ventaVendedor" required placeholder="Ej: Carlos Mendoza" class="w-full p-2.5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo de Celular</label>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo de Celular (Desde Google Sheets)</label>
                             <select id="ventaModelo" class="w-full p-2.5 border border-gray-300 rounded bg-white focus:ring-2 focus:ring-blue-500" onchange="forzarAutofillYRecalcular()">
-                                </select>
+                                <!-- Los productos se inyectan automáticamente desde Excel -->
+                            </select>
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Tipo de Venta</label>
@@ -86,16 +96,19 @@
                     </div>
 
                     <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition shadow cursor-pointer">
-                        💸 Registrar y Confirmar Venta
+                        💸 Registrar Venta y Descontar de Excel
                     </button>
                 </form>
             </div>
         </section>
 
+        <!-- ========================================== -->
+        <!-- PESTAÑA 2: CONSIGNACIONES Y PRÉSTAMOS     -->
+        <!-- ========================================== -->
         <section id="seccion-consignacion" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-indigo-200">
                 <h2 class="text-xl font-bold text-indigo-900 mb-4 flex items-center">
-                    <span class="mr-2">🤝</span> Despachar Equipos en Consignación / Préstamo
+                    <span class="mr-2">🤝</span> Despachar Equipos en Consignación
                 </h2>
                 <form onsubmit="registrarConsignacion(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
                     <div>
@@ -105,7 +118,8 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Seleccionar Celular del Stock</label>
                         <select id="consModelo" class="w-full p-2 border border-gray-300 rounded text-sm bg-white">
-                            </select>
+                            <!-- Dinámico -->
+                        </select>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Cantidad a Prestar</label>
@@ -113,14 +127,14 @@
                     </div>
                     <div>
                         <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded text-sm font-bold hover:bg-indigo-700 transition cursor-pointer">
-                            📦 Despachar e Inyectar a la Nube
+                            📦 Despachar y Sincronizar en Excel
                         </button>
                     </div>
                 </form>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
-                <h3 class="text-md font-bold text-gray-800 mb-3">Historial de Equipos en Tránsito (Sincronizado)</h3>
+                <h3 class="text-md font-bold text-gray-800 mb-3">Historial de Equipos en Tránsito</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -133,45 +147,21 @@
                                 <th class="p-3 text-center">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody id="tablaConsignaciones" class="text-sm divide-y divide-gray-200">
-                            </tbody>
+                        <tbody id="tablaConsignaciones" class="text-sm divide-y divide-gray-200"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- ========================================== -->
+        <!-- PESTAÑA 3: VISTA DUEÑO                     -->
+        <!-- ========================================== -->
         <section id="seccion-dueno" class="hidden space-y-6">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-red-200">
                 <h2 class="text-xl font-bold text-red-900 mb-4 flex items-center">
-                    <span class="mr-2">⚙️</span> Consola de Inventario Base (Importaciones Chile)
+                    <span class="mr-2">⚙️</span> Inventario Maestro en Tiempo Real
                 </h2>
-                <form onsubmit="agregarOEditarMercaderia(event)" class="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Modelo / Celular</label>
-                        <input type="text" id="invModelo" required placeholder="Ej: iPhone 15 Pro" class="w-full p-2 border border-gray-300 rounded text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Sucursal</label>
-                        <select id="invSucursal" class="w-full p-2 border border-gray-300 rounded text-sm bg-white">
-                            <option value="Central">Central</option>
-                            <option value="Norte">Norte</option>
-                            <option value="Mall">Mall</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Costo Base (USD $)</label>
-                        <input type="number" id="invCosto" required step="0.01" class="w-full p-2 border border-gray-300 rounded text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Stock</label>
-                        <input type="number" id="invStock" required min="0" class="w-full p-2 border border-gray-300 rounded text-sm">
-                    </div>
-                    <div>
-                        <button type="submit" class="w-full bg-red-700 text-white p-2 rounded text-sm font-bold hover:bg-red-800 transition cursor-pointer">
-                            💾 Guardar Item
-                        </button>
-                    </div>
-                </form>
+                <p class="text-xs text-gray-500 mb-4">Para modificar costos o añadir nuevos modelos de importación de Chile, agrégalos directamente como filas nuevas en tu pestaña de Google Sheets llamada <strong>"Inventario"</strong> y actualiza esta página.</p>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
@@ -180,9 +170,9 @@
                         <tr class="bg-slate-800 text-white text-xs uppercase">
                             <th class="p-3">Modelo</th>
                             <th class="p-3">Sucursal</th>
-                            <th class="p-3">Costo Base</th>
-                            <th class="p-3">Stock Disponible</th>
-                            <th class="p-3 text-center">Acciones</th>
+                            <th class="p-3">Costo Base F.O.B</th>
+                            <th class="p-3">Stock Disponible en Google Sheets</th>
+                            <th class="p-3 font-mono">Fila Excel</th>
                         </tr>
                     </thead>
                     <tbody id="tablaInventarioDueno" class="text-sm divide-y divide-gray-200"></tbody>
@@ -190,10 +180,13 @@
             </div>
         </section>
 
+        <!-- ========================================== -->
+        <!-- PESTAÑA 4: REPORTES                        -->
+        <!-- ========================================== -->
         <section id="seccion-reportes" class="hidden space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
-                    <span class="text-xs font-bold text-gray-500 uppercase">Ventas Totales Brutas</span>
+                    <span class="text-xs font-bold text-gray-500 uppercase">Ventas Locales Brutas</span>
                     <h3 id="kpiVentasTotales" class="text-2xl font-black text-slate-900 mt-1">0.00</h3>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500">
@@ -201,11 +194,12 @@
                     <h3 id="kpiGananciaTotal" class="text-2xl font-black text-emerald-900 mt-1">0.00</h3>
                 </div>
                 <div class="bg-white p-6 rounded-xl shadow-sm border-l-4 border-amber-500">
-                    <span class="text-xs font-bold text-amber-500 uppercase">Comisiones Generadas</span>
+                    <span class="text-xs font-bold text-amber-500 uppercase">Comisiones Acumuladas</span>
                     <h3 id="kpiComisionesTotales" class="text-2xl font-black text-amber-900 mt-1">0.00</h3>
                 </div>
             </div>
             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                <h3 class="font-bold mb-2">Sesión de Auditoría Local</h3>
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-100 text-slate-700 text-xs font-bold uppercase">
@@ -224,24 +218,48 @@
         </section>
     </main>
 
+    <!-- CONTROL DE ARQUITECTURA DE DATOS (JAVASCRIPT) -->
     <script>
-        // ENLACE MAESTRO CON GOOGLE SHEETS
-        // ⚠️ EN LA SIGUIENTE LÍNEA PEGA TU URL DE GOOGLE APPS SCRIPT:
-        const URL_API_GLOBAL = "https://script.google.com/macros/s/AKfycbyocfNKb6rR5EQrSEpWkOIUys0csumqGbu1N195cztZEN1dog1mDduJW0lzxxv8wBaD3Q/exec";
+        // ⚠️ PEGA AQUÍ TU URL DE GOOGLE APPS SCRIPT:
+        const URL_API_GLOBAL = "https://script.google.com/macros/s/AKfycbwq1LwdO__T-VaqNKhZg6mOVinGhcr0DFyWCtGbQpEKUL1S3aXrPe7Mmu1sbbXr1thw7A/exec";
 
-        let inventarioProductos = [
-            { modelo: "iPhone 15 Pro", sucursal: "Central", costoUsd: 800, stock: 15 },
-            { modelo: "Samsung Galaxy S24", sucursal: "Norte", costoUsd: 700, stock: 8 },
-            { modelo: "Xiaomi Redmi Note 13", sucursal: "Mall", costoUsd: 200, stock: 25 }
-        ];
-
+        // Arreglo maestro que se rellenará dinámicamente con lo que lea desde Google Sheets
+        let inventarioProductos = [];
         let baseDeDatosVentas = [];
         let baseDeDatosConsignaciones = []; 
         const PIN_SECRETO = "1234";
 
+        // FUNCIÓN CRUCIAL: Consume la API vía GET para descargar el stock real de Excel al cargar la página
+        function cargarInventarioDesdeGoogle() {
+            if (URL_API_GLOBAL === "AQUÍ_PEGA_TU_NUEVA_URL_DE_APPS_SCRIPT") {
+                document.getElementById('statusConexion').className = "bg-red-500 text-white px-3 py-1 rounded text-xs font-mono font-bold";
+                document.getElementById('statusConexion').textContent = "⚠️ Error: Falta configurar URL_API_GLOBAL";
+                return;
+            }
+
+            fetch(URL_API_GLOBAL)
+                .then(response => response.json())
+                .then(data => {
+                    inventarioProductos = data; // Guardamos en memoria local los datos frescos de Google
+                    actualizarSelectoresDeProductos();
+                    renderizarInventarioDueno();
+                    
+                    // Actualización estética del indicador de conexión
+                    const status = document.getElementById('statusConexion');
+                    status.className = "bg-emerald-500 text-white px-3 py-1 rounded text-xs font-mono font-bold border border-emerald-600";
+                    status.textContent = "⚡ Conectado a Google Sheets v7";
+                    status.classList.remove('animate-pulse');
+                })
+                .catch(error => {
+                    console.error("Error al leer base de datos central:", error);
+                    document.getElementById('statusConexion').textContent = "❌ Error de sincronización de red";
+                });
+        }
+
+        // CONTROL DE ACCESOS Y PESTAÑAS Y CAMBIOS DE SECCIÓN
         function cambiarPestana(pestana) {
             if (pestana === 'dueno' || pestana === 'reportes') {
-                if (prompt("🔑 PIN de Seguridad:") !== PIN_SECRETO) { alert("Acceso Denegado"); return; }
+                if (prompt("🔑 PRIVADO - Ingrese PIN del Administrador:") !== PIN_SECRETO) { alert("PIN Inválido. Acceso Denegado."); return; }
             }
             document.getElementById('seccion-vendedor').classList.add('hidden');
             document.getElementById('seccion-consignacion').classList.add('hidden');
@@ -254,17 +272,21 @@
             if (pestana === 'reportes') { document.getElementById('seccion-reportes').classList.remove('hidden'); actualizarTablaYKPIs(); }
         }
 
+        // ENLACE E INYECCIÓN DINÁMICA DE COMPONENTES EN LA VISTA
         function actualizarSelectoresDeProductos() {
             const vM = document.getElementById('ventaModelo'); const cM = document.getElementById('consModelo');
             if (!vM || !cM) return; vM.innerHTML = ''; cM.innerHTML = '';
+            
             inventarioProductos.forEach((p, i) => {
-                let txt = `${p.modelo} (Stock: ${p.stock} - ${p.sucursal})`;
-                let o1 = document.createElement('option'); o1.value = p.modelo; o1.textContent = txt;
+                let text = `${p.modelo} (Stock: ${p.stock} - Suc. ${p.sucursal})`;
+                let o1 = document.createElement('option'); o1.value = p.modelo; o1.textContent = text;
                 o1.setAttribute('data-costo', p.costoUsd); o1.setAttribute('data-sucursal', p.sucursal); o1.setAttribute('data-indice', i);
                 vM.appendChild(o1);
-                let o2 = document.createElement('option'); o2.value = p.modelo; o2.textContent = txt; o2.setAttribute('data-indice', i);
+                
+                let o2 = document.createElement('option'); o2.value = p.modelo; o2.textContent = text; o2.setAttribute('data-indice', i);
                 cM.appendChild(o2);
             });
+            actualizarPreciosVenta(false);
         }
 
         function forzarAutofillYRecalcular() { document.getElementById('ventaPrecioCobrado').dataset.manual = "false"; actualizarPreciosVenta(false); }
@@ -286,145 +308,163 @@
             document.getElementById('txtComisionVendedor').textContent = com.toFixed(2);
         }
 
-        // DISPARADOR 1: ENVIAR VENTA DIRECTA A LA NUBE
+        // OPERACIÓN DE VENTA DIRECTA CON DESCUENTO INMEDIATO EN LA FILA DE GOOGLE SHEETS
         function registrarVenta(e) {
             e.preventDefault();
             const sel = document.getElementById('ventaModelo'); const idx = parseInt(sel.options[sel.selectedIndex].getAttribute('data-indice'));
             const cant = parseInt(document.getElementById('ventaCantidad').value);
-            if (inventarioProductos[idx].stock < cant) { alert("Stock Insuficiente"); return; }
+            const productoSelected = inventarioProductos[idx];
 
-            inventarioProductos[idx].stock -= cant;
+            if (productoSelected.stock < cant) { alert(`❌ OPERACIÓN RECHAZADA: El inventario en la nube solo tiene ${productoSelected.stock} unidades de este modelo.`); return; }
+
+            // Descontamos en la memoria interna temporal inmediatamente
+            productoSelected.stock -= cant;
             let total = parseFloat(document.getElementById('txtTotalCobrar').textContent);
             let gan = parseFloat(document.getElementById('txtGananciaPura').textContent);
 
+            // Armamos el reporte financiero estructurado para enviar al script
             const payload = {
                 tipoOperacion: "VENTA",
+                filaExcel: productoSelected.filaExcel, // Le indicamos al puente en qué celda exacta golpear
                 vendedor: document.getElementById('ventaVendedor').value,
                 modelo: sel.value,
-                sucursal: sel.options[sel.selectedIndex].getAttribute('data-sucursal'),
+                sucursal: productoSelected.sucursal,
                 tipo: document.getElementById('ventaTipo').value,
                 cantidad: cant,
                 totalCobrado: total,
                 gananciaRegistrada: gan
             };
 
+            // Guardamos localmente en los reportes locales
+            baseDeDatosVentas.push({ vendedor: payload.vendedor, modelo: payload.modelo, sucursal: payload.sucursal, tipo: payload.tipo, cantidad: cant, totalCobrado: total, gananciaRegistrada: gan, comision: parseFloat(document.getElementById('txtComisionVendedor').textContent) });
+
             enviarANube(payload);
-            alert("💸 Venta registrada y enviada a Google Sheets.");
+            alert(`💰 ¡Venta completada!\nSe ha ordenado la rebaja automática de stock en la fila ${productoSelected.filaExcel} de tu Google Sheets.`);
             document.getElementById('ventaVendedor').value = ''; forzarAutofillYRecalcular(); actualizarSelectoresDeProductos();
         }
 
-        // DISPARADOR 2: ENVIAR CONSIGNACIÓN/PRÉSTAMO A LA NUBE
+        // REGISTRO Y SEGUIMIENTO AUTOMÁTICO DE CONSIGNACIONES EN LA NUBE
         function registrarConsignacion(e) {
             e.preventDefault();
             const sel = document.getElementById('consModelo'); const idx = parseInt(sel.options[sel.selectedIndex].getAttribute('data-indice'));
             const cant = parseInt(document.getElementById('consCantidad').value);
             const prod = inventarioProductos[idx];
-            if (prod.stock < cant) { alert("Stock insuficiente para préstamo"); return; }
+            if (prod.stock < cant) { alert("Inviable: Stock insuficiente en la nube para préstamo"); return; }
 
             prod.stock -= cant;
             let fecha = new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             
             const nuevaCons = {
                 id: Date.now(), fecha: fecha, cliente: document.getElementById('consCliente').value.trim(),
-                modelo: prod.modelo, sucursal: prod.sucursal, idxOrig: idx, cantidad: cant, estado: "Pendiente"
+                modelo: prod.modelo, sucursal: prod.sucursal, idxOrig: idx, filaExcel: prod.filaExcel, cantidad: cant, estado: "Pendiente"
             };
             baseDeDatosConsignaciones.push(nuevaCons);
 
+            // Payload para la nube que afecta tanto a la pestaña Consignaciones como a Inventario
             const payload = {
-                tipoOperacion: "CONSIGNACION", fecha: fecha, cliente: nuevaCons.cliente,
-                modelo: nuevaCons.modelo, cantidad: cant, sucursal: prod.sucursal, estado: "Pendiente"
+                tipoOperacion: "CONSIGNACION",
+                subTipo: "DESPACHO",
+                filaExcel: prod.filaExcel,
+                fecha: fecha,
+                cliente: nuevaCons.cliente,
+                modelo: nuevaCons.modelo,
+                cantidad: cant,
+                sucursal: prod.sucursal,
+                estado: "Pendiente"
             };
 
             enviarANube(payload);
-            alert("🤝 Equipo en tránsito respaldado en Google Sheets.");
+            alert(`🤝 Consignación inyectada a Google Sheets.\nInventario rebajado en la fila ${prod.filaExcel}.`);
             document.getElementById('consCliente').value = ''; actualizarSelectoresDeProductos(); renderizerConsignaciones();
         }
 
-        // DISPARADOR 3: ACTUALIZAR ESTADO DE PAGO EN LA NUBE
+        // CAMBIAR PAGO DE LA CONSIGNACIÓN
         function alternarEstadoConsignacion(id) {
             baseDeDatosConsignaciones = baseDeDatosConsignaciones.map(c => {
                 if (c.id === id) {
                     c.estado = c.estado === 'Pendiente' ? 'Pagado' : 'Pendiente';
                     const payload = {
-                        tipoOperacion: "CONSIGNACION", fecha: c.fecha, cliente: c.cliente,
-                        modelo: c.modelo, cantidad: c.cantidad, sucursal: c.sucursal, estado: c.estado + " (ACTUALIZADO)"
+                        tipoOperacion: "CONSIGNACION", subTipo: "CAMBIO_ESTADO", fecha: c.fecha, cliente: c.cliente,
+                        modelo: c.modelo, cantidad: c.cantidad, sucursal: c.sucursal, estado: c.estado + " (MODIFICADO)"
                     };
                     enviarANube(payload);
-                    alert(`Estado cambiado a ${c.estado}. Registro enviado a la nube.`);
+                    alert(`Estado actualizado a ${c.estado} en Google Sheets.`);
                 }
                 return c;
             });
             renderizerConsignaciones();
         }
 
+        // DEVOLVER CONSIGNACIÓN REINTEGRANDO EL STOCK EN EXCEL AUTOMÁTICAMENTE
         function devolverEquiposAInventario(id) {
             const c = baseDeDatosConsignaciones.find(x => x.id === id);
-            if (confirm(`¿Devolvió las ${c.cantidad} unidades?`)) {
+            if (confirm(`¿Confirmas la recepción física y reintegración de las ${c.cantidad} unidades al inventario?`)) {
                 inventarioProductos[c.idxOrig].stock += c.cantidad;
+                
                 const payload = {
-                    tipoOperacion: "CONSIGNACION", fecha: c.fecha, cliente: c.cliente,
-                    modelo: c.modelo, cantidad: c.cantidad, sucursal: c.sucursal, estado: "Devuelto a Stock"
+                    tipoOperacion: "CONSIGNACION",
+                    subTipo: "DEVOLUCION",
+                    filaExcel: c.filaExcel,
+                    fecha: c.fecha,
+                    cliente: c.cliente,
+                    modelo: c.modelo,
+                    cantidad: c.cantidad,
+                    sucursal: c.sucursal,
+                    estado: "Devuelto e Inyectado a Stock"
                 };
+
                 enviarANube(payload);
                 baseDeDatosConsignaciones = baseDeDatosConsignaciones.filter(x => x.id !== id);
+                alert(`🔙 Equipos reintegrados. Stock restaurado automáticamente en la fila ${c.filaExcel} de Google.`);
                 actualizarSelectoresDeProductos(); renderizerConsignaciones();
             }
         }
 
+        // CONTROLADOR DE RED GENÉRICO POST
         function enviarANube(data) {
-            if (URL_API_GLOBAL === "PEGA_AQUI_TU_URL_DE_GOOGLE_APPS_SCRIPT") return;
+            if (URL_API_GLOBAL === "AQUÍ_PEGA_TU_NUEVA_URL_DE_APPS_SCRIPT") return;
             fetch(URL_API_GLOBAL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-            .catch(e => console.error("Error de sincronización:", e));
+            .catch(e => console.error("Fallo crítico en la sincronización ascendente:", e));
         }
 
+        // RENDERIZADO ESTÁTICO DE INTERFAZ DE ADMINISTRACIÓN
         function renderizerConsignaciones() {
             const tbody = document.getElementById('tablaConsignaciones'); if(!tbody) return; tbody.innerHTML = '';
-            if (baseDeDatosConsignaciones.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay consignaciones vigentes.</td></tr>`; return; }
+            if (baseDeDatosConsignaciones.length === 0) { tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400 italic">No hay consignaciones registradas localmente en esta sesión.</td></tr>`; return; }
             baseDeDatosConsignaciones.forEach(c => {
                 let col = c.estado === 'Pagado' ? 'bg-green-100 text-green-800' : 'bg-rose-100 text-rose-800';
-                let fila = document.createElement('tr'); fila.className = "border-b border-gray-100";
-                fila.innerHTML = `<td class="p-3 text-xs text-gray-500">${c.fecha}</td><td class="p-3 font-semibold">${c.cliente}</td><td>${c.modelo}</td><td class="font-bold">${c.cantidad}</td><td><span class="px-2 py-0.5 rounded text-xs font-bold ${col}">${c.estado}</span></td><td class="p-3 text-center space-x-1"><button onclick="alternarEstadoConsignacion(${c.id})" class="text-xs bg-gray-100 px-2 py-1 rounded border">🔄 Pago</button><button onclick="devolverEquiposAInventario(${c.id})" class="text-xs bg-rose-50 text-rose-600 px-2 py-1 rounded">🔙 Devolver</button></td>`;
+                let fila = document.createElement('tr'); fila.className = "border-b border-gray-100 hover:bg-slate-50";
+                fila.innerHTML = `<td class="p-3 text-xs text-gray-500">${c.fecha}</td><td class="p-3 font-semibold">${c.cliente}</td><td class="p-3">${c.modelo}</td><td class="p-3 font-bold">${c.cantidad} U.</td><td class="p-3"><span class="px-2 py-0.5 rounded text-xs font-bold ${col}">${c.estado}</span></td><td class="p-3 text-center space-x-1"><button onclick="alternarEstadoConsignacion(${c.id})" class="text-xs bg-gray-100 px-2 py-1 rounded border cursor-pointer hover:bg-gray-200">🔄 Pago</button><button onclick="devolverEquiposAInventario(${c.id})" class="text-xs bg-rose-50 text-rose-600 px-2 py-1 rounded cursor-pointer hover:bg-rose-100">🔙 Reintegrar</button></td>`;
                 tbody.appendChild(fila);
             });
-        }
-
-        function agregarOEditarMercaderia(e) {
-            e.preventDefault();
-            const mod = document.getElementById('invModelo').value.trim(); const suc = document.getElementById('invSucursal').value;
-            const cost = parseFloat(document.getElementById('invCosto').value); const stk = parseInt(document.getElementById('invStock').value);
-            let idx = inventarioProductos.findIndex(p => p.modelo.toLowerCase() === mod.toLowerCase() && p.sucursal === suc);
-            if (idx !== -1) { inventarioProductos[idx].costoUsd = cost; inventarioProductos[idx].stock = stk; } 
-            else { inventarioProductos.push({ modelo: mod, sucursal: suc, costoUsd: cost, stock: stk }); }
-            document.getElementById('invModelo').value = ''; document.getElementById('invCosto').value = ''; document.getElementById('invStock').value = '';
-            renderizarInventarioDueno(); actualizarSelectoresDeProductos();
         }
 
         function renderizarInventarioDueno() {
             const tbody = document.getElementById('tablaInventarioDueno'); if(!tbody) return; tbody.innerHTML = '';
-            inventarioProductos.forEach((p, i) => {
-                let fila = document.createElement('tr'); fila.className = "border-b border-gray-100";
-                fila.innerHTML = `<td class="p-3 font-semibold">${p.modelo}</td><td><span class="bg-gray-100 px-2 py-1 rounded text-xs font-bold">${p.sucursal}</span></td><td class="text-red-600 font-bold">$${p.costoUsd.toFixed(2)}</td><td class="font-bold">${p.stock} U.</td><td class="text-center"><button onclick="cargarFichaParaEditar(${i})" class="text-xs text-blue-600">✏️ Editar</button></td>`;
+            inventarioProductos.forEach((p) => {
+                let fila = document.createElement('tr'); fila.className = "border-b border-gray-100 hover:bg-slate-50";
+                fila.innerHTML = `<td class="p-3 font-semibold text-slate-800">${p.modelo}</td><td class="p-3"><span class="bg-slate-100 px-2 py-1 rounded text-xs font-bold">${p.sucursal}</span></td><td class="p-3 text-red-600 font-bold">$${p.costoUsd.toFixed(2)} USD</td><td class="p-3 font-bold text-slate-900">${p.stock} Unidades</td><td class="p-3 font-mono text-gray-400 font-bold">Fila ${p.filaExcel}</td>`;
                 tbody.appendChild(fila);
             });
         }
 
-        function cargarFichaParaEditar(i) { let p = inventarioProductos[i]; document.getElementById('invModelo').value = p.modelo; document.getElementById('invSucursal').value = p.sucursal; document.getElementById('invCosto').value = p.costoUsd; document.getElementById('invStock').value = p.stock; }
-
         function actualizarTablaYKPIs() {
             const t = document.getElementById('tablaReportes'); if(!t) return; t.innerHTML = '';
-            if (baseDeDatosVentas.length === 0) { document.getElementById('kpiVentasTotales').textContent="0.00"; document.getElementById('kpiGananciaTotal').textContent="0.00"; document.getElementById('kpiComisionesTotales').textContent="0.00"; return; }
-            let b=0, g=0, c=0;
+            if (baseDeDatosVentas.length === 0) { document.getElementById('kpiVentasTotales').textContent="0.00"; document.getElementById('kpiGananciaTotal').textContent="0.00"; document.getElementById('kpiComisionesTotales').textContent="0.00"; t.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-400 italic">No hay registros de ventas locales en esta sesión. En tu archivo Google Sheets cuentas con los acumulados históricos completos.</td></tr>`; return; }
+            let b=0, g=0, comi=0;
             baseDeDatosVentas.forEach(v => {
-                b+=v.totalCobrado; g+=v.gananciaRegistrada; c+=v.comision;
-                let f = document.createElement('tr');
-                f.innerHTML = `<td class="p-2">${v.vendedor}</td><td class="text-xs">${v.modelo}</td><td>${v.tipo}</td><td class="font-bold">${v.cantidad}</td><td>${v.totalCobrado.toFixed(2)}</td><td class="text-blue-600 font-bold">${v.gananciaRegistrada.toFixed(2)}</td><td class="text-emerald-600">${v.comision.toFixed(2)}</td>`;
+                b+=v.totalCobrado; g+=v.gananciaRegistrada; comi+=v.comision;
+                let f = document.createElement('tr'); f.className = "border-b border-gray-100";
+                f.innerHTML = `<td class="p-2 font-medium">${v.vendedor}</td><td class="text-xs">${v.modelo}</td><td>${v.tipo}</td><td class="font-bold">${v.cantidad}</td><td>${v.totalCobrado.toFixed(2)}</td><td class="text-blue-600 font-bold">${v.gananciaRegistrada.toFixed(2)}</td><td class="text-emerald-600 font-bold">${v.comision.toFixed(2)}</td>`;
                 t.appendChild(f);
             });
-            document.getElementById('kpiVentasTotales').textContent = b.toFixed(2); document.getElementById('kpiGananciaTotal').textContent = g.toFixed(2); document.getElementById('kpiComisionesTotales').textContent = c.toFixed(2);
+            document.getElementById('kpiVentasTotales').textContent = b.toFixed(2); document.getElementById('kpiGananciaTotal').textContent = g.toFixed(2); document.getElementById('kpiComisionesTotales').textContent = comi.toFixed(2);
         }
 
-        actualizarSelectoresDeProductos();
-        actualizarPreciosVenta(false);
+        // DISPARADOR DE INICIO AUTOMÁTICO (BOOTSTRAP DE LA APLICACIÓN)
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarInventarioDesdeGoogle();
+        });
     </script>
 </body>
 </html>
